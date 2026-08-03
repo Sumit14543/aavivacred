@@ -45,13 +45,42 @@ class LeadService {
         $monthlyIncomeRaw= Security::sanitize($postData['monthly_income'] ?? '');
         $message         = Security::sanitize($postData['message'] ?? '');
 
-        // Additional KYC fields
+        // Additional KYC & Verification fields
         $panNumber       = strtoupper(Security::sanitize($postData['pan_number'] ?? ''));
+        $udyamNumber     = strtoupper(Security::sanitize($postData['udyam_number'] ?? ''));
         $gstNumber       = strtoupper(Security::sanitize($postData['gst_number'] ?? ''));
         $aadhaarNumber   = Security::sanitize($postData['aadhaar_number'] ?? '');
         $ifscCode        = strtoupper(Security::sanitize($postData['ifsc_code'] ?? ''));
         $bankName        = Security::sanitize($postData['bank_name'] ?? '');
         $accountNumber   = Security::sanitize($postData['account_number'] ?? '');
+
+        // File Uploads Handling
+        $docPanPath = '';
+        $docAadhaarPath = '';
+        $uploadDir = __DIR__ . '/../../uploads/documents/';
+        if (!file_exists($uploadDir)) {
+            @mkdir($uploadDir, 0777, true);
+        }
+
+        if (isset($_FILES['doc_pan']) && $_FILES['doc_pan']['error'] === UPLOAD_ERR_OK) {
+            $ext = strtolower(pathinfo($_FILES['doc_pan']['name'], PATHINFO_EXTENSION));
+            if (in_array($ext, ['jpg', 'jpeg', 'png', 'pdf'], true)) {
+                $fileName = 'pan_' . time() . '_' . uniqid() . '.' . $ext;
+                if (move_uploaded_file($_FILES['doc_pan']['tmp_name'], $uploadDir . $fileName)) {
+                    $docPanPath = 'uploads/documents/' . $fileName;
+                }
+            }
+        }
+
+        if (isset($_FILES['doc_aadhaar']) && $_FILES['doc_aadhaar']['error'] === UPLOAD_ERR_OK) {
+            $ext = strtolower(pathinfo($_FILES['doc_aadhaar']['name'], PATHINFO_EXTENSION));
+            if (in_array($ext, ['jpg', 'jpeg', 'png', 'pdf'], true)) {
+                $fileName = 'aadhaar_' . time() . '_' . uniqid() . '.' . $ext;
+                if (move_uploaded_file($_FILES['doc_aadhaar']['tmp_name'], $uploadDir . $fileName)) {
+                    $docAadhaarPath = 'uploads/documents/' . $fileName;
+                }
+            }
+        }
 
         // Validation Rules
         if (empty($name) || strlen($name) < 2) {
@@ -87,11 +116,14 @@ class LeadService {
             'employment_type' => $employmentType,
             'monthly_income'  => $monthlyIncome,
             'pan_number'      => $panNumber,
+            'udyam_number'    => $udyamNumber,
             'gst_number'      => $gstNumber,
             'aadhaar_number'  => $aadhaarNumber,
             'ifsc_code'       => $ifscCode,
             'bank_name'       => $bankName,
             'account_number'  => $accountNumber,
+            'doc_pan'         => $docPanPath,
+            'doc_aadhaar'     => $docAadhaarPath,
             'message'         => $message,
             'status'          => 'New',
             'assigned_to'     => '',

@@ -70,7 +70,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
         header('Content-Type: text/csv; charset=utf-8');
         header('Content-Disposition: attachment; filename=aavivacred_selected_leads_' . date('Y-m-d_H-i') . '.csv');
         $output = fopen('php://output', 'w');
-        fputcsv($output, ['Lead ID', 'Name', 'Email', 'Mobile', 'Category', 'City', 'Loan Amount', 'Employment Type', 'Monthly Income', 'PAN', 'Status', 'Assigned To', 'Submitted At']);
+        fputcsv($output, ['Lead ID', 'Name', 'Email', 'Mobile', 'Category', 'City', 'Loan Amount', 'Employment Type', 'Monthly Income', 'PAN Number', 'Aadhaar Number', 'Udyam Number', 'GSTIN Number', 'Bank Name', 'IFSC Code', 'Account Number', 'Status', 'Assigned To', 'Submitted At']);
         foreach ($filtered as $lead) {
             fputcsv($output, [
                 $lead['lead_id'] ?? ('AVV-' . $lead['id']),
@@ -83,6 +83,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
                 $lead['employment_type'] ?? '',
                 $lead['monthly_income'] ?? 0,
                 $lead['pan_number'] ?? '',
+                $lead['aadhaar_number'] ?? '',
+                $lead['udyam_number'] ?? '',
+                $lead['gst_number'] ?? '',
+                $lead['bank_name'] ?? '',
+                $lead['ifsc_code'] ?? '',
+                $lead['account_number'] ?? '',
                 $lead['status'] ?? 'New',
                 $lead['assigned_to'] ?? 'Unassigned',
                 $lead['created_at'] ?? ''
@@ -110,7 +116,7 @@ if (isset($_GET['export']) && $_GET['export'] === 'csv') {
     header('Content-Type: text/csv; charset=utf-8');
     header('Content-Disposition: attachment; filename=aavivacred_all_leads_' . date('Y-m-d_H-i') . '.csv');
     $output = fopen('php://output', 'w');
-    fputcsv($output, ['Lead ID', 'Name', 'Email', 'Mobile', 'Category', 'City', 'Loan Amount', 'Employment Type', 'Monthly Income', 'PAN', 'Status', 'Assigned To', 'Submitted At']);
+    fputcsv($output, ['Lead ID', 'Name', 'Email', 'Mobile', 'Category', 'City', 'Loan Amount', 'Employment Type', 'Monthly Income', 'PAN Number', 'Aadhaar Number', 'Udyam Number', 'GSTIN Number', 'Bank Name', 'IFSC Code', 'Account Number', 'Status', 'Assigned To', 'Submitted At']);
     foreach ($leads as $lead) {
         fputcsv($output, [
             $lead['lead_id'] ?? ('AVV-' . $lead['id']),
@@ -123,6 +129,12 @@ if (isset($_GET['export']) && $_GET['export'] === 'csv') {
             $lead['employment_type'] ?? '',
             $lead['monthly_income'] ?? 0,
             $lead['pan_number'] ?? '',
+            $lead['aadhaar_number'] ?? '',
+            $lead['udyam_number'] ?? '',
+            $lead['gst_number'] ?? '',
+            $lead['bank_name'] ?? '',
+            $lead['ifsc_code'] ?? '',
+            $lead['account_number'] ?? '',
             $lead['status'] ?? 'New',
             $lead['assigned_to'] ?? 'Unassigned',
             $lead['created_at'] ?? ''
@@ -230,54 +242,70 @@ $leads = $service->getLeads($search, $category, $status, $assignedTo);
             </div>
         <?php endif; ?>
 
-        <!-- Advanced Filters Bar with Partner Assignment Filter -->
-        <form method="GET" action="leads.php" class="bg-white dark:bg-white/5 border border-slate-200 dark:border-white/10 p-3.5 rounded-2xl mb-6 flex flex-col md:flex-row items-center gap-3 shadow-sm">
-            <div class="flex-1 w-full relative">
-                <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-slate-400">
-                    <i data-lucide="search" class="w-3.5 h-3.5"></i>
-                </span>
-                <input type="text" name="search" value="<?php echo htmlspecialchars($search); ?>" placeholder="Search by name, email, mobile, city, or assigned agent..." class="w-full pl-9 pr-4 py-2 bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-xl text-xs font-semibold text-slate-800 dark:text-white placeholder-slate-400 focus:outline-none focus:border-amber-400">
-            </div>
+        <!-- Advanced Filters Bar with Clear Labels & Wording -->
+        <form method="GET" action="leads.php" class="bg-white dark:bg-white/5 border border-slate-200 dark:border-white/10 p-4 rounded-2xl mb-6 shadow-sm">
+            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-12 gap-3 items-end">
+                
+                <!-- Search Box -->
+                <div class="md:col-span-4 space-y-1">
+                    <label class="block text-[10px] font-black uppercase tracking-wider text-slate-500 dark:text-slate-400">Search Applicant / Lead ID / Mobile</label>
+                    <div class="relative flex items-center">
+                        <span class="absolute left-3 text-slate-400">
+                            <i data-lucide="search" class="w-3.5 h-3.5"></i>
+                        </span>
+                        <input type="text" name="search" value="<?php echo htmlspecialchars($search); ?>" placeholder="Search by name, mobile, email, PAN..." class="w-full pl-9 pr-3 py-2 bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-xl text-xs font-bold text-slate-800 dark:text-white placeholder-slate-400 focus:outline-none focus:border-amber-400">
+                    </div>
+                </div>
 
-            <!-- Partner Assignee Filter -->
-            <div class="w-full md:w-48">
-                <select name="assigned_to" class="w-full px-3 py-2 bg-slate-50 dark:bg-[#031d40] border border-slate-200 dark:border-white/10 rounded-xl text-xs font-semibold text-slate-800 dark:text-white focus:outline-none focus:border-amber-400">
-                    <option value="">All Assignments</option>
-                    <option value="unassigned" <?php echo $assignedTo === 'unassigned' ? 'selected' : ''; ?>>⚠️ Unassigned Only</option>
-                    <option value="HDFC Bank DSA Desk" <?php echo $assignedTo === 'HDFC Bank DSA Desk' ? 'selected' : ''; ?>>🏦 HDFC Bank DSA</option>
-                    <option value="ICICI Bank Business Desk" <?php echo $assignedTo === 'ICICI Bank Business Desk' ? 'selected' : ''; ?>>🏦 ICICI Bank Desk</option>
-                    <option value="Bajaj Finance Team" <?php echo $assignedTo === 'Bajaj Finance Team' ? 'selected' : ''; ?>>🏦 Bajaj Finance</option>
-                    <option value="Axis Bank Processing Desk" <?php echo $assignedTo === 'Axis Bank Processing Desk' ? 'selected' : ''; ?>>🏦 Axis Bank Desk</option>
-                    <option value="Field Executive 1 (North)" <?php echo $assignedTo === 'Field Executive 1 (North)' ? 'selected' : ''; ?>>👤 Executive 1 (North)</option>
-                    <option value="Field Executive 2 (South)" <?php echo $assignedTo === 'Field Executive 2 (South)' ? 'selected' : ''; ?>>👤 Executive 2 (South)</option>
-                </select>
-            </div>
+                <!-- Partner Assignment Filter -->
+                <div class="md:col-span-3 space-y-1">
+                    <label class="block text-[10px] font-black uppercase tracking-wider text-slate-500 dark:text-slate-400">Partner Assignment</label>
+                    <select name="assigned_to" class="w-full px-3 py-2 bg-slate-50 dark:bg-[#031d40] border border-slate-200 dark:border-white/10 rounded-xl text-xs font-bold text-slate-800 dark:text-white focus:outline-none focus:border-amber-400">
+                        <option value="">All Assignments (Show All)</option>
+                        <option value="unassigned" <?php echo $assignedTo === 'unassigned' ? 'selected' : ''; ?>>⚠️ Unassigned Only</option>
+                        <option value="HDFC Bank DSA Desk" <?php echo $assignedTo === 'HDFC Bank DSA Desk' ? 'selected' : ''; ?>>🏦 HDFC Bank DSA</option>
+                        <option value="ICICI Bank Business Desk" <?php echo $assignedTo === 'ICICI Bank Business Desk' ? 'selected' : ''; ?>>🏦 ICICI Bank Desk</option>
+                        <option value="Bajaj Finance Team" <?php echo $assignedTo === 'Bajaj Finance Team' ? 'selected' : ''; ?>>🏦 Bajaj Finance</option>
+                        <option value="Axis Bank Processing Desk" <?php echo $assignedTo === 'Axis Bank Processing Desk' ? 'selected' : ''; ?>>🏦 Axis Bank Desk</option>
+                        <option value="Field Executive 1 (North)" <?php echo $assignedTo === 'Field Executive 1 (North)' ? 'selected' : ''; ?>>👤 Executive 1 (North)</option>
+                        <option value="Field Executive 2 (South)" <?php echo $assignedTo === 'Field Executive 2 (South)' ? 'selected' : ''; ?>>👤 Executive 2 (South)</option>
+                    </select>
+                </div>
 
-            <div class="w-full md:w-40">
-                <select name="category" class="w-full px-3 py-2 bg-slate-50 dark:bg-[#031d40] border border-slate-200 dark:border-white/10 rounded-xl text-xs font-semibold text-slate-800 dark:text-white focus:outline-none">
-                    <option value="">All Categories</option>
-                    <option value="personal" <?php echo $category === 'personal' ? 'selected' : ''; ?>>Personal Loan</option>
-                    <option value="business" <?php echo $category === 'business' ? 'selected' : ''; ?>>Business Loan</option>
-                    <option value="gold" <?php echo $category === 'gold' ? 'selected' : ''; ?>>Gold Loan</option>
-                    <option value="home" <?php echo $category === 'home' ? 'selected' : ''; ?>>Home Loan</option>
-                    <option value="payday" <?php echo $category === 'payday' ? 'selected' : ''; ?>>Payday Loan</option>
-                    <option value="edi" <?php echo $category === 'edi' ? 'selected' : ''; ?>>EDI Loan</option>
-                </select>
-            </div>
+                <!-- Loan Product Filter -->
+                <div class="md:col-span-2 space-y-1">
+                    <label class="block text-[10px] font-black uppercase tracking-wider text-slate-500 dark:text-slate-400">Loan Product</label>
+                    <select name="category" class="w-full px-3 py-2 bg-slate-50 dark:bg-[#031d40] border border-slate-200 dark:border-white/10 rounded-xl text-xs font-bold text-slate-800 dark:text-white focus:outline-none focus:border-amber-400">
+                        <option value="">All Loan Products</option>
+                        <option value="personal" <?php echo $category === 'personal' ? 'selected' : ''; ?>>Personal Loan</option>
+                        <option value="business" <?php echo $category === 'business' ? 'selected' : ''; ?>>Business Loan</option>
+                        <option value="gold" <?php echo $category === 'gold' ? 'selected' : ''; ?>>Gold Loan</option>
+                        <option value="home" <?php echo $category === 'home' ? 'selected' : ''; ?>>Home Loan</option>
+                        <option value="payday" <?php echo $category === 'payday' ? 'selected' : ''; ?>>Payday Loan</option>
+                        <option value="edi" <?php echo $category === 'edi' ? 'selected' : ''; ?>>EDI Loan</option>
+                    </select>
+                </div>
 
-            <div class="w-full md:w-36">
-                <select name="status" class="w-full px-3 py-2 bg-slate-50 dark:bg-[#031d40] border border-slate-200 dark:border-white/10 rounded-xl text-xs font-semibold text-slate-800 dark:text-white focus:outline-none">
-                    <option value="">All Statuses</option>
-                    <option value="New" <?php echo $status === 'New' ? 'selected' : ''; ?>>New</option>
-                    <option value="In Review" <?php echo $status === 'In Review' ? 'selected' : ''; ?>>In Review</option>
-                    <option value="Approved" <?php echo $status === 'Approved' ? 'selected' : ''; ?>>Approved</option>
-                    <option value="Rejected" <?php echo $status === 'Rejected' ? 'selected' : ''; ?>>Rejected</option>
-                </select>
-            </div>
+                <!-- Lead Status Filter -->
+                <div class="md:col-span-2 space-y-1">
+                    <label class="block text-[10px] font-black uppercase tracking-wider text-slate-500 dark:text-slate-400">Lead Status</label>
+                    <select name="status" class="w-full px-3 py-2 bg-slate-50 dark:bg-[#031d40] border border-slate-200 dark:border-white/10 rounded-xl text-xs font-bold text-slate-800 dark:text-white focus:outline-none focus:border-amber-400">
+                        <option value="">All Statuses</option>
+                        <option value="New" <?php echo $status === 'New' ? 'selected' : ''; ?>>New</option>
+                        <option value="In Review" <?php echo $status === 'In Review' ? 'selected' : ''; ?>>In Review</option>
+                        <option value="Approved" <?php echo $status === 'Approved' ? 'selected' : ''; ?>>Approved</option>
+                        <option value="Rejected" <?php echo $status === 'Rejected' ? 'selected' : ''; ?>>Rejected</option>
+                    </select>
+                </div>
 
-            <button type="submit" class="w-full md:w-auto px-4 py-2 bg-amber-400 text-slate-950 font-bold rounded-xl text-xs hover:bg-amber-300 transition">
-                Filter Leads
-            </button>
+                <!-- Filter Submit Button -->
+                <div class="md:col-span-1">
+                    <button type="submit" class="w-full py-2 bg-amber-400 hover:bg-yellow-400 text-slate-950 font-black rounded-xl text-xs transition shadow-md flex items-center justify-center gap-1">
+                        <i data-lucide="filter" class="w-3.5 h-3.5"></i> Apply
+                    </button>
+                </div>
+
+            </div>
         </form>
 
         <!-- Main Form for Bulk Operations -->
@@ -294,20 +322,19 @@ $leads = $service->getLeads($search, $category, $status, $assignedTo);
                                 <th class="p-3 w-10 text-center">
                                     <input type="checkbox" id="select-all" class="w-4 h-4 rounded border-slate-300 text-amber-500 focus:ring-amber-400 cursor-pointer">
                                 </th>
-                                <th class="p-3">Lead ID</th>
+                                <th class="p-3">Lead ID & Date</th>
                                 <th class="p-3">Applicant Info</th>
                                 <th class="p-3">Loan Specs</th>
-                                <th class="p-3">Employment & Income</th>
-                                <th class="p-3">City</th>
-                                <th class="p-3">Assigned Partner / Agent</th>
+                                <th class="p-3">Verification Badges</th>
+                                <th class="p-3">Assigned Partner</th>
                                 <th class="p-3">Status</th>
-                                <th class="p-3">Action</th>
+                                <th class="p-3 text-center">Actions & Dossier</th>
                             </tr>
                         </thead>
                         <tbody class="divide-y divide-slate-100 dark:divide-white/5">
                             <?php if (empty($leads)): ?>
                                 <tr>
-                                    <td colspan="9" class="p-6 text-center text-slate-400 font-medium">No lead applications matched your search criteria.</td>
+                                    <td colspan="8" class="p-6 text-center text-slate-400 font-medium">No lead applications matched your search criteria.</td>
                                 </tr>
                             <?php else: ?>
                                 <?php foreach ($leads as $lead): ?>
@@ -316,24 +343,59 @@ $leads = $service->getLeads($search, $category, $status, $assignedTo);
                                         <td class="p-3 text-center">
                                             <input type="checkbox" name="selected_leads[]" value="<?php echo htmlspecialchars($lid); ?>" class="lead-checkbox w-4 h-4 rounded border-slate-300 text-amber-500 focus:ring-amber-400 cursor-pointer">
                                         </td>
-                                        <td class="p-3 font-mono font-bold text-amber-600 dark:text-amber-400">
-                                            <?php echo htmlspecialchars($lead['lead_id'] ?? ('AVV-' . $lead['id'])); ?>
+                                        <td class="p-3">
+                                            <div class="font-mono font-black text-amber-600 dark:text-amber-400 text-xs"><?php echo htmlspecialchars($lead['lead_id'] ?? ('AVV-' . $lead['id'])); ?></div>
+                                            <div class="text-[9.5px] text-slate-400 font-semibold mt-0.5"><?php echo htmlspecialchars(date('d M Y, h:i A', strtotime($lead['created_at'] ?? 'now'))); ?></div>
                                         </td>
                                         <td class="p-3">
                                             <div class="font-extrabold text-slate-900 dark:text-white text-xs"><?php echo htmlspecialchars($lead['name']); ?></div>
-                                            <div class="text-[10px] text-slate-500 dark:text-slate-400 font-medium"><?php echo htmlspecialchars($lead['mobile']); ?></div>
-                                            <div class="text-[10px] text-slate-500 dark:text-slate-400"><?php echo htmlspecialchars($lead['email']); ?></div>
+                                            <div class="text-[10px] text-slate-500 dark:text-slate-400 font-semibold flex items-center gap-1 mt-0.5">
+                                                <i data-lucide="phone" class="w-3 h-3 text-emerald-500"></i> <?php echo htmlspecialchars($lead['mobile']); ?>
+                                            </div>
+                                            <div class="text-[10px] text-slate-500 dark:text-slate-400 flex items-center gap-1">
+                                                <i data-lucide="mail" class="w-3 h-3 text-sky-400"></i> <?php echo htmlspecialchars($lead['email']); ?>
+                                            </div>
+                                            <div class="text-[9.5px] font-bold text-slate-400 uppercase mt-0.5">📍 <?php echo htmlspecialchars($lead['city']); ?></div>
                                         </td>
                                         <td class="p-3">
-                                            <div class="font-black text-emerald-600 dark:text-emerald-400">₹<?php echo number_format(floatval($lead['loan_amount'])); ?></div>
-                                            <div class="text-[9px] text-slate-500 dark:text-slate-400 uppercase font-bold tracking-wider mt-0.5"><?php echo htmlspecialchars($lead['category']); ?></div>
+                                            <div class="font-black text-emerald-600 dark:text-emerald-400 text-sm">₹<?php echo number_format(floatval($lead['loan_amount'])); ?></div>
+                                            <div class="text-[9.5px] text-slate-500 dark:text-slate-300 uppercase font-extrabold tracking-wider mt-0.5"><?php echo htmlspecialchars($lead['category']); ?></div>
+                                            <div class="text-[9.5px] text-slate-400 font-semibold mt-0.5"><?php echo htmlspecialchars($lead['employment_type'] ?? 'N/A'); ?> (₹<?php echo number_format(floatval($lead['monthly_income'] ?? 0)); ?>/mo)</div>
                                         </td>
-                                        <td class="p-3">
-                                            <div class="font-semibold text-slate-800 dark:text-slate-200"><?php echo htmlspecialchars($lead['employment_type'] ?? 'N/A'); ?></div>
-                                            <div class="text-[10px] text-slate-500 dark:text-slate-400">₹<?php echo number_format(floatval($lead['monthly_income'] ?? 0)); ?> / mo</div>
+
+                                        <!-- Verification Badges Column -->
+                                        <td class="p-3 space-y-1">
+                                            <div class="flex flex-wrap gap-1">
+                                                <?php if (!empty($lead['pan_number'])): ?>
+                                                    <span class="px-1.5 py-0.5 rounded bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20 text-[9px] font-bold">
+                                                        PAN: <?php echo htmlspecialchars($lead['pan_number']); ?>
+                                                    </span>
+                                                <?php endif; ?>
+                                                <?php if (!empty($lead['aadhaar_number'])): ?>
+                                                    <span class="px-1.5 py-0.5 rounded bg-sky-500/10 text-sky-600 dark:text-sky-400 border border-sky-500/20 text-[9px] font-bold">
+                                                        Aadhaar: <?php echo htmlspecialchars(substr($lead['aadhaar_number'], 0, 4) . '...'); ?>
+                                                    </span>
+                                                <?php endif; ?>
+                                            </div>
+                                            <div class="flex flex-wrap gap-1">
+                                                <?php if (!empty($lead['udyam_number'])): ?>
+                                                    <span class="px-1.5 py-0.5 rounded bg-purple-500/10 text-purple-600 dark:text-purple-300 border border-purple-500/20 text-[9px] font-bold">
+                                                        Udyam: <?php echo htmlspecialchars($lead['udyam_number']); ?>
+                                                    </span>
+                                                <?php endif; ?>
+                                                <?php if (!empty($lead['gst_number'])): ?>
+                                                    <span class="px-1.5 py-0.5 rounded bg-amber-500/10 text-amber-600 dark:text-amber-300 border border-amber-500/20 text-[9px] font-bold">
+                                                        GST: <?php echo htmlspecialchars($lead['gst_number']); ?>
+                                                    </span>
+                                                <?php endif; ?>
+                                            </div>
+                                            <?php if (!empty($lead['bank_name']) || !empty($lead['ifsc_code'])): ?>
+                                                <div class="text-[9.5px] text-slate-400 font-semibold truncate max-w-[160px]">
+                                                    🏦 <?php echo htmlspecialchars($lead['bank_name'] ?: $lead['ifsc_code']); ?>
+                                                </div>
+                                            <?php endif; ?>
                                         </td>
-                                        <td class="p-3 font-semibold text-slate-700 dark:text-slate-300"><?php echo htmlspecialchars($lead['city']); ?></td>
-                                        
+
                                         <!-- Assigned To Column -->
                                         <td class="p-3">
                                             <?php if (!empty($lead['assigned_to'])): ?>
@@ -345,6 +407,7 @@ $leads = $service->getLeads($search, $category, $status, $assignedTo);
                                             <?php endif; ?>
                                         </td>
 
+                                        <!-- Status -->
                                         <td class="p-3">
                                             <?php 
                                             $st = strtolower($lead['status'] ?? 'new');
@@ -357,18 +420,26 @@ $leads = $service->getLeads($search, $category, $status, $assignedTo);
                                                 <?php echo htmlspecialchars($lead['status'] ?? 'New'); ?>
                                             </span>
                                         </td>
-                                        <td class="p-3">
-                                            <form method="POST" action="leads.php" class="flex items-center gap-1">
-                                                <?php echo \AavivaCred\Security\Security::csrfField(); ?>
-                                                <input type="hidden" name="action" value="update_status">
-                                                <input type="hidden" name="lead_id" value="<?php echo htmlspecialchars($lid); ?>">
-                                                <select name="status" onchange="this.form.submit()" class="px-2 py-1 bg-slate-100 dark:bg-[#031d40] border border-slate-200 dark:border-white/10 rounded-lg text-[10px] font-bold text-slate-800 dark:text-white focus:outline-none">
-                                                    <option value="New" <?php echo ($lead['status'] ?? 'New') === 'New' ? 'selected' : ''; ?>>New</option>
-                                                    <option value="In Review" <?php echo ($lead['status'] ?? '') === 'In Review' ? 'selected' : ''; ?>>In Review</option>
-                                                    <option value="Approved" <?php echo ($lead['status'] ?? '') === 'Approved' ? 'selected' : ''; ?>>Approved</option>
-                                                    <option value="Rejected" <?php echo ($lead['status'] ?? '') === 'Rejected' ? 'selected' : ''; ?>>Rejected</option>
-                                                </select>
-                                            </form>
+
+                                        <!-- Actions & Dossier Trigger -->
+                                        <td class="p-3 text-center">
+                                            <div class="flex items-center justify-center gap-1.5">
+                                                <button type="button" onclick='openLeadDossier(<?php echo htmlspecialchars(json_encode($lead), ENT_QUOTES, "UTF-8"); ?>)' class="px-2.5 py-1.5 bg-amber-400 hover:bg-yellow-400 text-slate-950 font-black rounded-lg text-[10px] flex items-center gap-1 shadow-sm transition active:scale-95">
+                                                    <i data-lucide="eye" class="w-3.5 h-3.5"></i> Details
+                                                </button>
+
+                                                <form method="POST" action="leads.php" class="inline-block">
+                                                    <?php echo \AavivaCred\Security\Security::csrfField(); ?>
+                                                    <input type="hidden" name="action" value="update_status">
+                                                    <input type="hidden" name="lead_id" value="<?php echo htmlspecialchars($lid); ?>">
+                                                    <select name="status" onchange="this.form.submit()" class="px-1.5 py-1 bg-slate-100 dark:bg-[#031d40] border border-slate-200 dark:border-white/10 rounded-lg text-[10px] font-bold text-slate-800 dark:text-white focus:outline-none">
+                                                        <option value="New" <?php echo ($lead['status'] ?? 'New') === 'New' ? 'selected' : ''; ?>>New</option>
+                                                        <option value="In Review" <?php echo ($lead['status'] ?? '') === 'In Review' ? 'selected' : ''; ?>>In Review</option>
+                                                        <option value="Approved" <?php echo ($lead['status'] ?? '') === 'Approved' ? 'selected' : ''; ?>>Approved</option>
+                                                        <option value="Rejected" <?php echo ($lead['status'] ?? '') === 'Rejected' ? 'selected' : ''; ?>>Rejected</option>
+                                                    </select>
+                                                </form>
+                                            </div>
                                         </td>
                                     </tr>
                                 <?php endforeach; ?>
@@ -411,6 +482,166 @@ $leads = $service->getLeads($search, $category, $status, $assignedTo);
             </div>
         </form>
     </main>
+
+    <!-- FULL LEAD DOSSIER MODAL DIALOG -->
+    <div id="lead-details-modal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-md z-50 flex items-center justify-center p-3 sm:p-5 hidden opacity-0 transition-all duration-300 overflow-y-auto">
+      <div class="max-w-2xl w-full my-auto bg-slate-900 text-white border border-white/15 rounded-3xl p-5 sm:p-7 shadow-2xl space-y-5 relative overflow-hidden">
+        
+        <!-- Close Header Button -->
+        <button type="button" onclick="closeLeadDossier()" class="absolute top-4 right-4 w-9 h-9 bg-white/10 hover:bg-white/20 text-white rounded-full flex items-center justify-center font-bold text-sm transition">
+          ✕
+        </button>
+
+        <!-- Top Header -->
+        <div class="flex items-center justify-between border-b border-white/10 pb-4 pr-10">
+          <div>
+            <div class="flex items-center gap-2">
+              <span id="dos-lead-id" class="font-mono font-black text-amber-400 text-base">AVV-XXXXX</span>
+              <span id="dos-status-badge" class="px-2.5 py-0.5 rounded-full border text-[9.5px] font-black uppercase tracking-wider bg-emerald-500/10 text-emerald-400 border-emerald-500/20">NEW</span>
+            </div>
+            <p id="dos-created-at" class="text-[11px] text-slate-400 font-semibold mt-0.5">Submitted on: --</p>
+          </div>
+        </div>
+
+        <div class="space-y-4 max-h-[70vh] overflow-y-auto pr-1">
+          
+          <!-- Section 1: Applicant Profile -->
+          <div class="bg-white/5 border border-white/10 rounded-2xl p-4 space-y-3">
+            <h4 class="text-xs font-black uppercase tracking-wider text-amber-400 flex items-center gap-1.5 border-b border-white/10 pb-2">
+              <i data-lucide="user" class="w-4 h-4"></i> Applicant Personal Details
+            </h4>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
+              <div>
+                <span class="text-[10px] font-bold text-slate-400 block uppercase">Full Name</span>
+                <span id="dos-name" class="font-extrabold text-white text-sm">--</span>
+              </div>
+              <div>
+                <span class="text-[10px] font-bold text-slate-400 block uppercase">City / Location</span>
+                <span id="dos-city" class="font-bold text-slate-200">--</span>
+              </div>
+              <div>
+                <span class="text-[10px] font-bold text-slate-400 block uppercase">Mobile Number</span>
+                <a id="dos-mobile-link" href="#" class="font-black text-emerald-400 hover:underline flex items-center gap-1">
+                  <span id="dos-mobile">--</span> <i data-lucide="phone-call" class="w-3 h-3"></i>
+                </a>
+              </div>
+              <div>
+                <span class="text-[10px] font-bold text-slate-400 block uppercase">Email Address</span>
+                <a id="dos-email-link" href="#" class="font-bold text-sky-400 hover:underline flex items-center gap-1">
+                  <span id="dos-email">--</span> <i data-lucide="external-link" class="w-3 h-3"></i>
+                </a>
+              </div>
+            </div>
+          </div>
+
+          <!-- Section 2: Loan Requirements & Financials -->
+          <div class="bg-white/5 border border-white/10 rounded-2xl p-4 space-y-3">
+            <h4 class="text-xs font-black uppercase tracking-wider text-amber-400 flex items-center gap-1.5 border-b border-white/10 pb-2">
+              <i data-lucide="indian-rupee" class="w-4 h-4"></i> Loan Requirements & Financial Profile
+            </h4>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
+              <div>
+                <span class="text-[10px] font-bold text-slate-400 block uppercase">Required Loan Amount</span>
+                <span id="dos-amount" class="font-black text-emerald-400 text-base">₹0</span>
+              </div>
+              <div>
+                <span class="text-[10px] font-bold text-slate-400 block uppercase">Loan Product Category</span>
+                <span id="dos-category" class="font-extrabold text-amber-300 uppercase">--</span>
+              </div>
+              <div>
+                <span class="text-[10px] font-bold text-slate-400 block uppercase">Employment Type</span>
+                <span id="dos-employment" class="font-bold text-slate-200">--</span>
+              </div>
+              <div>
+                <span class="text-[10px] font-bold text-slate-400 block uppercase">Monthly Income</span>
+                <span id="dos-income" class="font-bold text-slate-200">₹0 / month</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Section 3: Identity & Business Verification -->
+          <div class="bg-white/5 border border-white/10 rounded-2xl p-4 space-y-3">
+            <h4 class="text-xs font-black uppercase tracking-wider text-amber-400 flex items-center gap-1.5 border-b border-white/10 pb-2">
+              <i data-lucide="shield-check" class="w-4 h-4"></i> Identity & Government Verification Details
+            </h4>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
+              <div>
+                <span class="text-[10px] font-bold text-slate-400 block uppercase">PAN Card Number</span>
+                <span id="dos-pan" class="font-mono font-black text-amber-300 text-sm">Not Provided</span>
+              </div>
+              <div>
+                <span class="text-[10px] font-bold text-slate-400 block uppercase">Aadhaar Number</span>
+                <span id="dos-aadhaar" class="font-mono font-extrabold text-sky-300 text-sm">Not Provided</span>
+              </div>
+              <div>
+                <span class="text-[10px] font-bold text-slate-400 block uppercase">Udyam Registration Number</span>
+                <span id="dos-udyam" class="font-mono font-bold text-purple-300">Not Provided</span>
+              </div>
+              <div>
+                <span class="text-[10px] font-bold text-slate-400 block uppercase">GSTIN Number</span>
+                <span id="dos-gst" class="font-mono font-bold text-emerald-300">Not Provided</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Section 4: Bank Account & Disbursement Details -->
+          <div class="bg-white/5 border border-white/10 rounded-2xl p-4 space-y-3">
+            <h4 class="text-xs font-black uppercase tracking-wider text-amber-400 flex items-center gap-1.5 border-b border-white/10 pb-2">
+              <i data-lucide="landmark" class="w-4 h-4"></i> Bank Account & Disbursement Info
+            </h4>
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs">
+              <div>
+                <span class="text-[10px] font-bold text-slate-400 block uppercase">Bank Name</span>
+                <span id="dos-bank-name" class="font-bold text-white">Not Provided</span>
+              </div>
+              <div>
+                <span class="text-[10px] font-bold text-slate-400 block uppercase">IFSC Code</span>
+                <span id="dos-ifsc" class="font-mono font-bold text-amber-300">Not Provided</span>
+              </div>
+              <div>
+                <span class="text-[10px] font-bold text-slate-400 block uppercase">Account Number</span>
+                <span id="dos-account" class="font-mono font-bold text-slate-200">Not Provided</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Section 5: Uploaded Documents -->
+          <div id="dos-docs-container" class="bg-white/5 border border-white/10 rounded-2xl p-4 space-y-3">
+            <h4 class="text-xs font-black uppercase tracking-wider text-amber-400 flex items-center gap-1.5 border-b border-white/10 pb-2">
+              <i data-lucide="file-check" class="w-4 h-4"></i> Uploaded Documents
+            </h4>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
+              <div>
+                <span class="text-[10px] font-bold text-slate-400 block uppercase mb-1">PAN Card Image / File</span>
+                <span id="dos-pan-doc-status" class="text-slate-400">Not Uploaded</span>
+              </div>
+              <div>
+                <span class="text-[10px] font-bold text-slate-400 block uppercase mb-1">Aadhaar Card Front/Back</span>
+                <span id="dos-aadhaar-doc-status" class="text-slate-400">Not Uploaded</span>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Footer Quick Contact Buttons -->
+        <div class="flex flex-wrap items-center justify-between gap-3 pt-3 border-t border-white/10">
+          <div class="flex items-center gap-2">
+            <a id="btn-dos-whatsapp" href="#" target="_blank" class="px-3 py-2 bg-emerald-600 hover:bg-emerald-500 text-white font-extrabold rounded-xl text-xs flex items-center gap-1.5 shadow">
+              <i data-lucide="message-circle" class="w-3.5 h-3.5"></i> WhatsApp
+            </a>
+            <a id="btn-dos-call" href="#" class="px-3 py-2 bg-sky-600 hover:bg-sky-500 text-white font-extrabold rounded-xl text-xs flex items-center gap-1.5 shadow">
+              <i data-lucide="phone" class="w-3.5 h-3.5"></i> Call Applicant
+            </a>
+          </div>
+
+          <button type="button" onclick="closeLeadDossier()" class="px-5 py-2 bg-white/10 hover:bg-white/20 text-white font-bold rounded-xl text-xs transition">
+            Close Dossier
+          </button>
+        </div>
+
+      </div>
+    </div>
 
     <script>
         document.addEventListener('DOMContentLoaded', () => {
@@ -473,6 +704,82 @@ $leads = $service->getLeads($search, $category, $status, $assignedTo);
             window.executeBulkAction = function(actionType) {
                 const checked = document.querySelectorAll('.lead-checkbox:checked');
                 if (checked.length === 0) {
+                    alert('Please select at least one lead from the table.');
+                    return;
+                }
+
+                document.getElementById('bulk-action-type').value = actionType;
+                document.getElementById('bulk-leads-form').submit();
+            };
+
+            // Lead Dossier Modal Logic
+            window.openLeadDossier = function(lead) {
+                document.getElementById('dos-lead-id').innerText = lead.lead_id || ('AVV-' + (lead.id || ''));
+                document.getElementById('dos-status-badge').innerText = (lead.status || 'New').toUpperCase();
+                document.getElementById('dos-created-at').innerText = 'Submitted on: ' + (lead.created_at || 'N/A');
+
+                document.getElementById('dos-name').innerText = lead.name || 'N/A';
+                document.getElementById('dos-city').innerText = lead.city || 'N/A';
+                
+                const mobile = lead.mobile || '';
+                document.getElementById('dos-mobile').innerText = mobile || 'N/A';
+                document.getElementById('dos-mobile-link').href = mobile ? 'tel:' + mobile : '#';
+                
+                const email = lead.email || '';
+                document.getElementById('dos-email').innerText = email || 'N/A';
+                document.getElementById('dos-email-link').href = email ? 'mailto:' + email : '#';
+
+                const amt = parseFloat(lead.loan_amount || 0);
+                document.getElementById('dos-amount').innerText = '₹' + amt.toLocaleString('en-IN');
+                document.getElementById('dos-category').innerText = lead.category || 'N/A';
+                document.getElementById('dos-employment').innerText = lead.employment_type || 'N/A';
+                
+                const income = parseFloat(lead.monthly_income || 0);
+                document.getElementById('dos-income').innerText = '₹' + income.toLocaleString('en-IN') + ' / month';
+
+                document.getElementById('dos-pan').innerText = lead.pan_number || 'Not Provided';
+                document.getElementById('dos-aadhaar').innerText = lead.aadhaar_number || 'Not Provided';
+                document.getElementById('dos-udyam').innerText = lead.udyam_number || 'Not Provided';
+                document.getElementById('dos-gst').innerText = lead.gst_number || 'Not Provided';
+
+                document.getElementById('dos-bank-name').innerText = lead.bank_name || 'Not Provided';
+                document.getElementById('dos-ifsc').innerText = lead.ifsc_code || 'Not Provided';
+                document.getElementById('dos-account').innerText = lead.account_number || 'Not Provided';
+
+                // Document links
+                const panStatus = document.getElementById('dos-pan-doc-status');
+                if (lead.doc_pan) {
+                    panStatus.innerHTML = `<a href="../${lead.doc_pan}" target="_blank" class="px-3 py-1 bg-amber-400 text-slate-950 font-bold rounded-lg inline-flex items-center gap-1 hover:bg-yellow-400 transition"><i data-lucide="download" class="w-3 h-3"></i> Download PAN Doc</a>`;
+                } else {
+                    panStatus.innerText = 'Not Uploaded';
+                }
+
+                const aadhaarStatus = document.getElementById('dos-aadhaar-doc-status');
+                if (lead.doc_aadhaar) {
+                    aadhaarStatus.innerHTML = `<a href="../${lead.doc_aadhaar}" target="_blank" class="px-3 py-1 bg-amber-400 text-slate-950 font-bold rounded-lg inline-flex items-center gap-1 hover:bg-yellow-400 transition"><i data-lucide="download" class="w-3 h-3"></i> Download Aadhaar Doc</a>`;
+                } else {
+                    aadhaarStatus.innerText = 'Not Uploaded';
+                }
+
+                // WhatsApp action link
+                const cleanMob = mobile.replace(/[^0-9]/g, '');
+                const waMob = cleanMob.length === 10 ? '91' + cleanMob : cleanMob;
+                document.getElementById('btn-dos-whatsapp').href = waMob ? `https://wa.me/${waMob}?text=Hi%20${encodeURIComponent(lead.name || '')},%20regarding%20your%20loan%20application%20(${encodeURIComponent(lead.lead_id || '')})` : '#';
+                document.getElementById('btn-dos-call').href = mobile ? 'tel:' + mobile : '#';
+
+                const modal = document.getElementById('lead-details-modal');
+                modal.classList.remove('hidden');
+                setTimeout(() => modal.classList.remove('opacity-0'), 10);
+                if (window.lucide) lucide.createIcons();
+            };
+
+            window.closeLeadDossier = function() {
+                const modal = document.getElementById('lead-details-modal');
+                modal.classList.add('opacity-0');
+                setTimeout(() => modal.classList.add('hidden'), 300);
+            };
+        });
+    </script>
                     alert('Please select at least one lead from the table.');
                     return;
                 }
