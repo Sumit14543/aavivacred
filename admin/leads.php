@@ -780,14 +780,5 @@ $leads = $service->getLeads($search, $category, $status, $assignedTo);
             };
         });
     </script>
-                    alert('Please select at least one lead from the table.');
-                    return;
-                }
-
-                document.getElementById('bulk-action-type').value = actionType;
-                document.getElementById('bulk-leads-form').submit();
-            };
-        });
-    </script>
 </body>
 </html>
