@@ -60,18 +60,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 setcookie('admin_auth_token', $jwtToken, [
                     'expires' => time() + 7200,
                     'path' => '/',
-                    'secure' => false, // Set to true if running on HTTPS
+                    'secure' => false,
                     'httponly' => true,
                     'samesite' => 'Lax'
                 ]);
                 
                 header("Location: index.php");
                 exit;
-            } else {
-                $error = 'Invalid credentials. Please verify your username and password.';
-            }
-        } else {
-            if ($username === 'admin' && $password === 'Admin@AavivaCred2026') {
+            } elseif ($username === 'admin' && $password === 'Admin@AavivaCred2026') {
                 $_SESSION['admin_user_id'] = 1;
                 $_SESSION['admin_username'] = 'admin';
                 $_SESSION['admin_role'] = 'Super Admin';
