@@ -31,10 +31,12 @@ class LeadRepository {
 
         if ($this->pdo) {
             try {
+                $this->ensureColumnsExist();
+
                 $stmt = $this->pdo->prepare("INSERT INTO `leads`
-                    (`lead_id`, `name`, `email`, `mobile`, `category`, `city`, `loan_amount`, `employment_type`, `monthly_income`, `pan_number`, `gst_number`, `aadhaar_number`, `ifsc_code`, `bank_name`, `account_number`, `message`, `status`, `assigned_to`, `created_at`)
+                    (`lead_id`, `name`, `email`, `mobile`, `category`, `city`, `loan_amount`, `employment_type`, `monthly_income`, `pan_number`, `udyam_number`, `gst_number`, `business_name`, `legal_owner_name`, `business_nature`, `gst_turnover`, `aadhaar_number`, `ifsc_code`, `bank_name`, `account_number`, `message`, `status`, `assigned_to`, `created_at`)
                     VALUES
-                    (:lead_id, :name, :email, :mobile, :category, :city, :loan_amount, :employment_type, :monthly_income, :pan_number, :gst_number, :aadhaar_number, :ifsc_code, :bank_name, :account_number, :message, :status, :assigned_to, :created_at)");
+                    (:lead_id, :name, :email, :mobile, :category, :city, :loan_amount, :employment_type, :monthly_income, :pan_number, :udyam_number, :gst_number, :business_name, :legal_owner_name, :business_nature, :gst_turnover, :aadhaar_number, :ifsc_code, :bank_name, :account_number, :message, :status, :assigned_to, :created_at)");
 
                 $stmt->execute([
                     ':lead_id'         => $leadId,
@@ -47,7 +49,12 @@ class LeadRepository {
                     ':employment_type' => $data['employment_type'] ?? '',
                     ':monthly_income'  => floatval($data['monthly_income'] ?? 0),
                     ':pan_number'      => $data['pan_number'] ?? '',
+                    ':udyam_number'    => $data['udyam_number'] ?? '',
                     ':gst_number'      => $data['gst_number'] ?? '',
+                    ':business_name'   => $data['business_name'] ?? '',
+                    ':legal_owner_name'=> $data['legal_owner_name'] ?? '',
+                    ':business_nature' => $data['business_nature'] ?? '',
+                    ':gst_turnover'    => $data['gst_turnover'] ?? '',
                     ':aadhaar_number'  => $data['aadhaar_number'] ?? '',
                     ':ifsc_code'       => $data['ifsc_code'] ?? '',
                     ':bank_name'       => $data['bank_name'] ?? '',
@@ -176,6 +183,35 @@ class LeadRepository {
             else $stats['new']++;
         }
         return $stats;
+    }
+
+    private function ensureColumnsExist(): void {
+        if (!$this->pdo) return;
+        try {
+            $colsNeeded = [
+                'udyam_number'     => "VARCHAR(50) DEFAULT '' AFTER pan_number",
+                'business_name'    => "VARCHAR(255) DEFAULT '' AFTER gst_number",
+                'legal_owner_name' => "VARCHAR(255) DEFAULT '' AFTER business_name",
+                'business_nature'  => "VARCHAR(255) DEFAULT '' AFTER legal_owner_name",
+                'gst_turnover'     => "VARCHAR(100) DEFAULT '' AFTER business_nature"
+            ];
+            
+            $existingCols = [];
+            $stmt = $this->pdo->query("SHOW COLUMNS FROM `leads`");
+            if ($stmt) {
+                while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+                    $existingCols[] = strtolower($row['Field']);
+                }
+            }
+            
+            foreach ($colsNeeded as $col => $sql) {
+                if (!in_array(strtolower($col), $existingCols, true)) {
+                    $this->pdo->exec("ALTER TABLE `leads` ADD COLUMN `$col` $sql");
+                }
+            }
+        } catch (Exception $e) {
+            error_log("LeadRepository ensureColumnsExist Error: " . $e->getMessage());
+        }
     }
 
     private function backupToJson(array $data): void {
