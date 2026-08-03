@@ -90,7 +90,9 @@ $_SESSION['lead_values']['gst_number'] = $gst;
 $_SESSION['lead_values']['business_name'] = !empty($result['trade_name']) ? $result['trade_name'] : ($result['legal_name'] ?? '');
 $_SESSION['lead_values']['legal_owner_name'] = $result['legal_name'] ?? '';
 $_SESSION['lead_values']['business_nature'] = is_array($result['business_nature'] ?? null) ? implode(', ', $result['business_nature']) : ($result['business_nature'] ?? '');
+$_SESSION['lead_values']['organization_type'] = $result['business_constitution'] ?? $result['constitution'] ?? '';
 $_SESSION['lead_values']['gst_turnover'] = $result['aggre_turnover'] ?? '';
+$_SESSION['lead_values']['business_address'] = $result['address'] ?? '';
 
 echo json_encode([
     'error' => false,

@@ -448,7 +448,9 @@ include __DIR__ . '/../includes/header.php';
           <input type="hidden" id="input-business-name" name="business_name" value="<?php echo htmlspecialchars($values['business_name'] ?? ''); ?>">
           <input type="hidden" id="input-legal-owner-name" name="legal_owner_name" value="<?php echo htmlspecialchars($values['legal_owner_name'] ?? ''); ?>">
           <input type="hidden" id="input-business-nature" name="business_nature" value="<?php echo htmlspecialchars($values['business_nature'] ?? ''); ?>">
+          <input type="hidden" id="input-organization-type" name="organization_type" value="<?php echo htmlspecialchars($values['organization_type'] ?? ''); ?>">
           <input type="hidden" id="input-gst-turnover" name="gst_turnover" value="<?php echo htmlspecialchars($values['gst_turnover'] ?? ''); ?>">
+          <input type="hidden" id="input-business-address" name="business_address" value="<?php echo htmlspecialchars($values['business_address'] ?? ''); ?>">
 
           <!-- STEP 1: CONTACT VERIFICATION -->
           <div id="step-1" class="step-container space-y-6 text-left">
@@ -1390,7 +1392,9 @@ include __DIR__ . '/../includes/header.php';
       business_name: getVal('input-business-name'),
       legal_owner_name: getVal('input-legal-owner-name'),
       business_nature: getVal('input-business-nature'),
+      organization_type: getVal('input-organization-type'),
       gst_turnover: getVal('input-gst-turnover'),
+      business_address: getVal('input-business-address'),
       aadhaar_number: getVal('input-aadhaar'),
       ifsc_code: getVal('input-ifsc'),
       bank_name: getVal('input-bank-name'),
@@ -1663,6 +1667,12 @@ include __DIR__ . '/../includes/header.php';
             if (natParts.length > 0) {
               document.getElementById('input-business-nature').value = natParts.join(' - ');
             }
+            if (res.data.organization_type) {
+              document.getElementById('input-organization-type').value = res.data.organization_type;
+            }
+            if (res.data.address) {
+              document.getElementById('input-business-address').value = res.data.address;
+            }
             if (typeof saveSessionState === 'function') saveSessionState();
             document.getElementById('udyam-status-text').innerText = 'Udyam Registration Verified: ' + res.data.enterprise_name;
             document.getElementById('udyam-status-badge').classList.remove('hidden');
@@ -1721,6 +1731,12 @@ include __DIR__ . '/../includes/header.php';
             }
             if (res.data.aggre_turnover) {
               document.getElementById('input-gst-turnover').value = res.data.aggre_turnover;
+            }
+            if (res.data.business_constitution || res.data.constitution) {
+              document.getElementById('input-organization-type').value = res.data.business_constitution || res.data.constitution;
+            }
+            if (res.data.address) {
+              document.getElementById('input-business-address').value = res.data.address;
             }
             if (typeof saveSessionState === 'function') saveSessionState();
             document.getElementById('gst-status-text').innerText = 'GSTIN Verified: ' + (res.data.trade_name || res.data.legal_name);

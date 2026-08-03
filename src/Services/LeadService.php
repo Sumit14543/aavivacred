@@ -73,7 +73,9 @@ class LeadService {
         $businessName    = Security::sanitize($postData['business_name'] ?? '');
         $legalOwnerName  = Security::sanitize($postData['legal_owner_name'] ?? '');
         $businessNature  = Security::sanitize($postData['business_nature'] ?? '');
+        $organizationType= Security::sanitize($postData['organization_type'] ?? '');
         $gstTurnover     = Security::sanitize($postData['gst_turnover'] ?? '');
+        $businessAddress = Security::sanitize($postData['business_address'] ?? '');
         $aadhaarNumber   = Security::sanitize($postData['aadhaar_number'] ?? '');
         $ifscCode        = strtoupper(Security::sanitize($postData['ifsc_code'] ?? ''));
         $bankName        = Security::sanitize($postData['bank_name'] ?? '');
@@ -146,7 +148,9 @@ class LeadService {
             'business_name'   => $businessName,
             'legal_owner_name'=> $legalOwnerName,
             'business_nature' => $businessNature,
+            'organization_type'=> $organizationType,
             'gst_turnover'    => $gstTurnover,
+            'business_address'=> $businessAddress,
             'aadhaar_number'  => $aadhaarNumber,
             'ifsc_code'       => $ifscCode,
             'bank_name'       => $bankName,

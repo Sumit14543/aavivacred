@@ -70,7 +70,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
         header('Content-Type: text/csv; charset=utf-8');
         header('Content-Disposition: attachment; filename=aavivacred_selected_leads_' . date('Y-m-d_H-i') . '.csv');
         $output = fopen('php://output', 'w');
-        fputcsv($output, ['Lead ID', 'Submitted At', 'Applicant Name', 'Mobile Number', 'Email Address', 'City', 'Loan Category', 'Loan Amount (INR)', 'Employment Type', 'Monthly Income (INR)', 'PAN Number', 'Aadhaar Number', 'Udyam Registration No.', 'GSTIN Number', 'Business / Firm Name', 'Owner Legal Name', 'Business Nature', 'GST Turnover Slab', 'Bank Name', 'IFSC Code', 'Account Number', 'Assigned Partner', 'Status']);
+        fputcsv($output, ['Lead ID', 'Submitted At', 'Applicant Name', 'Mobile Number', 'Email Address', 'City', 'Loan Category', 'Loan Amount (INR)', 'Employment Type', 'Monthly Income (INR)', 'PAN Number', 'Aadhaar Number', 'Udyam Registration No.', 'GSTIN Number', 'Business / Firm Name', 'Owner Legal Name', 'Business Nature', 'Org Constitution Type', 'GST Turnover Slab', 'Business Address', 'Bank Name', 'IFSC Code', 'Account Number', 'Assigned Partner', 'Status']);
         foreach ($filtered as $lead) {
             fputcsv($output, [
                 $lead['lead_id'] ?? ('AVV-' . $lead['id']),
@@ -90,7 +90,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
                 $lead['business_name'] ?? '',
                 $lead['legal_owner_name'] ?? '',
                 $lead['business_nature'] ?? '',
+                $lead['organization_type'] ?? '',
                 $lead['gst_turnover'] ?? '',
+                $lead['business_address'] ?? '',
                 $lead['bank_name'] ?? '',
                 strtoupper($lead['ifsc_code'] ?? ''),
                 $lead['account_number'] ?? '',
@@ -120,7 +122,7 @@ if (isset($_GET['export']) && $_GET['export'] === 'csv') {
     header('Content-Type: text/csv; charset=utf-8');
     header('Content-Disposition: attachment; filename=aavivacred_all_leads_' . date('Y-m-d_H-i') . '.csv');
     $output = fopen('php://output', 'w');
-    fputcsv($output, ['Lead ID', 'Submitted At', 'Applicant Name', 'Mobile Number', 'Email Address', 'City', 'Loan Category', 'Loan Amount (INR)', 'Employment Type', 'Monthly Income (INR)', 'PAN Number', 'Aadhaar Number', 'Udyam Registration No.', 'GSTIN Number', 'Business / Firm Name', 'Owner Legal Name', 'Business Nature', 'GST Turnover Slab', 'Bank Name', 'IFSC Code', 'Account Number', 'Assigned Partner', 'Status']);
+    fputcsv($output, ['Lead ID', 'Submitted At', 'Applicant Name', 'Mobile Number', 'Email Address', 'City', 'Loan Category', 'Loan Amount (INR)', 'Employment Type', 'Monthly Income (INR)', 'PAN Number', 'Aadhaar Number', 'Udyam Registration No.', 'GSTIN Number', 'Business / Firm Name', 'Owner Legal Name', 'Business Nature', 'Org Constitution Type', 'GST Turnover Slab', 'Business Address', 'Bank Name', 'IFSC Code', 'Account Number', 'Assigned Partner', 'Status']);
     foreach ($leads as $lead) {
         fputcsv($output, [
             $lead['lead_id'] ?? ('AVV-' . $lead['id']),
@@ -140,7 +142,9 @@ if (isset($_GET['export']) && $_GET['export'] === 'csv') {
             $lead['business_name'] ?? '',
             $lead['legal_owner_name'] ?? '',
             $lead['business_nature'] ?? '',
+            $lead['organization_type'] ?? '',
             $lead['gst_turnover'] ?? '',
+            $lead['business_address'] ?? '',
             $lead['bank_name'] ?? '',
             strtoupper($lead['ifsc_code'] ?? ''),
             $lead['account_number'] ?? '',
@@ -347,7 +351,9 @@ $leads = $service->getLeads($search, $category, $status, $assignedTo);
                                 <th class="p-3">Business / Firm Name</th>
                                 <th class="p-3">Owner Legal Name</th>
                                 <th class="p-3">Business Nature / Type</th>
+                                <th class="p-3">Org / Constitution Type</th>
                                 <th class="p-3">GST Turnover Slab</th>
+                                <th class="p-3">Business Address</th>
                                 <th class="p-3">Bank Name</th>
                                 <th class="p-3">IFSC Code</th>
                                 <th class="p-3">Account Number</th>
@@ -359,7 +365,7 @@ $leads = $service->getLeads($search, $category, $status, $assignedTo);
                         <tbody class="divide-y divide-slate-100 dark:divide-white/5">
                             <?php if (empty($leads)): ?>
                                 <tr>
-                                    <td colspan="25" class="p-6 text-center text-slate-400 font-medium">No lead applications matched your search criteria.</td>
+                                    <td colspan="27" class="p-6 text-center text-slate-400 font-medium">No lead applications matched your search criteria.</td>
                                 </tr>
                             <?php else: ?>
                                 <?php foreach ($leads as $lead): ?>
@@ -497,10 +503,28 @@ $leads = $service->getLeads($search, $category, $status, $assignedTo);
                                             <?php endif; ?>
                                         </td>
 
+                                        <!-- Organization / Constitution Type -->
+                                        <td class="p-3 text-xs font-bold text-purple-600 dark:text-purple-300">
+                                            <?php if (!empty($lead['organization_type'])): ?>
+                                                ⚖️ <?php echo htmlspecialchars($lead['organization_type']); ?>
+                                            <?php else: ?>
+                                                <span class="text-slate-400 font-normal">—</span>
+                                            <?php endif; ?>
+                                        </td>
+
                                         <!-- GST Turnover Slab -->
                                         <td class="p-3 text-xs font-bold text-emerald-600 dark:text-emerald-400">
                                             <?php if (!empty($lead['gst_turnover'])): ?>
                                                 📊 <?php echo htmlspecialchars($lead['gst_turnover']); ?>
+                                            <?php else: ?>
+                                                <span class="text-slate-400 font-normal">—</span>
+                                            <?php endif; ?>
+                                        </td>
+
+                                        <!-- Business Address -->
+                                        <td class="p-3 text-xs font-medium text-slate-600 dark:text-slate-400 max-w-xs truncate" title="<?php echo htmlspecialchars($lead['business_address'] ?? ''); ?>">
+                                            <?php if (!empty($lead['business_address'])): ?>
+                                                🏠 <?php echo htmlspecialchars($lead['business_address']); ?>
                                             <?php else: ?>
                                                 <span class="text-slate-400 font-normal">—</span>
                                             <?php endif; ?>

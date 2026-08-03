@@ -34,9 +34,9 @@ class LeadRepository {
                 $this->ensureColumnsExist();
 
                 $stmt = $this->pdo->prepare("INSERT INTO `leads`
-                    (`lead_id`, `name`, `email`, `mobile`, `category`, `city`, `loan_amount`, `employment_type`, `monthly_income`, `pan_number`, `udyam_number`, `gst_number`, `business_name`, `legal_owner_name`, `business_nature`, `gst_turnover`, `aadhaar_number`, `ifsc_code`, `bank_name`, `account_number`, `message`, `status`, `assigned_to`, `created_at`)
+                    (`lead_id`, `name`, `email`, `mobile`, `category`, `city`, `loan_amount`, `employment_type`, `monthly_income`, `pan_number`, `udyam_number`, `gst_number`, `business_name`, `legal_owner_name`, `business_nature`, `organization_type`, `gst_turnover`, `business_address`, `aadhaar_number`, `ifsc_code`, `bank_name`, `account_number`, `message`, `status`, `assigned_to`, `created_at`)
                     VALUES
-                    (:lead_id, :name, :email, :mobile, :category, :city, :loan_amount, :employment_type, :monthly_income, :pan_number, :udyam_number, :gst_number, :business_name, :legal_owner_name, :business_nature, :gst_turnover, :aadhaar_number, :ifsc_code, :bank_name, :account_number, :message, :status, :assigned_to, :created_at)");
+                    (:lead_id, :name, :email, :mobile, :category, :city, :loan_amount, :employment_type, :monthly_income, :pan_number, :udyam_number, :gst_number, :business_name, :legal_owner_name, :business_nature, :organization_type, :gst_turnover, :business_address, :aadhaar_number, :ifsc_code, :bank_name, :account_number, :message, :status, :assigned_to, :created_at)");
 
                 $stmt->execute([
                     ':lead_id'         => $leadId,
@@ -54,7 +54,9 @@ class LeadRepository {
                     ':business_name'   => $data['business_name'] ?? '',
                     ':legal_owner_name'=> $data['legal_owner_name'] ?? '',
                     ':business_nature' => $data['business_nature'] ?? '',
+                    ':organization_type'=> $data['organization_type'] ?? '',
                     ':gst_turnover'    => $data['gst_turnover'] ?? '',
+                    ':business_address'=> $data['business_address'] ?? '',
                     ':aadhaar_number'  => $data['aadhaar_number'] ?? '',
                     ':ifsc_code'       => $data['ifsc_code'] ?? '',
                     ':bank_name'       => $data['bank_name'] ?? '',
@@ -193,7 +195,9 @@ class LeadRepository {
                 'business_name'    => "VARCHAR(255) DEFAULT '' AFTER gst_number",
                 'legal_owner_name' => "VARCHAR(255) DEFAULT '' AFTER business_name",
                 'business_nature'  => "VARCHAR(255) DEFAULT '' AFTER legal_owner_name",
-                'gst_turnover'     => "VARCHAR(100) DEFAULT '' AFTER business_nature"
+                'organization_type'=> "VARCHAR(100) DEFAULT '' AFTER business_nature",
+                'gst_turnover'     => "VARCHAR(100) DEFAULT '' AFTER organization_type",
+                'business_address' => "TEXT DEFAULT NULL AFTER gst_turnover"
             ];
             
             $existingCols = [];

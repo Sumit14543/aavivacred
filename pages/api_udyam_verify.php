@@ -160,7 +160,9 @@ if ($resData && isset($resData['error']) && $resData['error'] === false && !empt
     $_SESSION['lead_values']['udyam_number'] = $udyam;
     $_SESSION['lead_values']['business_name'] = $enterpriseName;
     $_SESSION['lead_values']['legal_owner_name'] = $ownerVal;
-    $_SESSION['lead_values']['business_nature'] = $majorActivity . ' (' . $enterpriseType . ' - ' . $organizationType . ')';
+    $_SESSION['lead_values']['business_nature'] = $majorActivity . ' (' . $enterpriseType . ')';
+    $_SESSION['lead_values']['organization_type'] = $organizationType;
+    $_SESSION['lead_values']['business_address'] = $fullAddress;
 
     echo json_encode([
         'error' => false,
