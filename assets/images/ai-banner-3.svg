@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="260" viewBox="0 0 1200 260" preserveAspectRatio="xMidYMid slice">
+  <rect width="1200" height="260" fill="#032a35"/>
+  <g transform="translate(60,56)">
+    <text x="0" y="30" font-family="Inter,Arial,Helvetica" font-size="26" fill="#DFFBFF" font-weight="700">Get High-Intent Leads — Close Faster</text>
+    <text x="0" y="64" font-family="Inter,Arial,Helvetica" font-size="14" fill="#9FDFF2">Multi-step verification · CRM-ready delivery · 90-day guarantee</text>
+    <rect x="0" y="86" width="180" height="40" rx="20" fill="#00D4FF"/>
+    <text x="90" y="112" font-family="Inter,Arial,Helvetica" font-size="14" fill="#041623" font-weight="700" text-anchor="middle">Contact</text>
+  </g>
+  <g transform="translate(820,40)">
+    <circle cx="40" cy="40" r="36" fill="#00E676" fill-opacity="0.08"/>
+    <text x="0" y="140" font-family="Inter,Arial,Helvetica" font-size="18" fill="#AEEAFF" font-weight="700">Trusted by Partners</text>
+  </g>
+</svg>

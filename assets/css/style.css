@@ -1,0 +1,427 @@
+:root {
+  --primary: #0a7dbe;
+  --bg-dark-blue: #021435;
+  --bg-dark-blue-light: #031d40;
+  --accent-yellow: #ffd30f;
+  --buddy-green: #1db87a;
+  --buddy-orange: #ff8a0d;
+  --buddy-red: #e8414a;
+  
+  --primary-rgb: 10, 125, 190;
+  --slate-900: #0f172a;
+  --slate-950: #020617;
+  
+  --mesh-gradient: radial-gradient(at 0% 0%, rgba(10, 125, 190, 0.05) 0px, transparent 50%),
+                   radial-gradient(at 100% 0%, rgba(3, 29, 64, 0.05) 0px, transparent 50%),
+                   radial-gradient(at 100% 100%, rgba(29, 184, 122, 0.04) 0px, transparent 50%);
+}
+
+/* Hide scrollbar lines globally while preserving scrolling functionality */
+* {
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;  /* Firefox */
+}
+
+*::-webkit-scrollbar {
+  display: none;  /* Chrome, Safari, Opera */
+}
+
+body {
+  font-family: 'Manrope', sans-serif;
+  background-color: #f6f8fb;
+  color: #0f172a;
+}
+
+h1, h2, h3, h4, h5, h6, .font-display {
+  font-family: 'Manrope', sans-serif;
+}
+
+/* Smooth Interactive Elements Transition */
+a, button {
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* Premium Buttons in Buddy Loan Style */
+.btn-buddy-primary, .btn-buddy-secondary, .btn-buddy-blue {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 48px;
+  padding: 10px 28px;
+  font-size: 14px;
+  letter-spacing: 0.025em;
+  font-family: 'Manrope', sans-serif;
+  text-align: center;
+  vertical-align: middle;
+  cursor: pointer;
+}
+
+.btn-buddy-primary {
+  background-color: var(--accent-yellow);
+  color: #021435;
+  font-weight: 700;
+  border-radius: 9999px;
+  box-shadow: 0 4px 12px rgba(255, 211, 15, 0.2);
+  transition: all 0.3s ease;
+}
+.btn-buddy-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 16px rgba(255, 211, 15, 0.35);
+  background-color: #f0c300;
+}
+
+.btn-buddy-secondary {
+  background-color: transparent;
+  color: #ffffff;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  font-weight: 600;
+  border-radius: 9999px;
+  transition: all 0.3s ease;
+}
+.btn-buddy-secondary:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+  border-color: #ffffff;
+  transform: translateY(-1px);
+}
+
+.btn-buddy-blue {
+  background-color: var(--primary);
+  color: #ffffff;
+  font-weight: 700;
+  border-radius: 9999px;
+  box-shadow: 0 4px 12px rgba(10, 125, 190, 0.2);
+  transition: all 0.3s ease;
+}
+.btn-buddy-blue:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 16px rgba(10, 125, 190, 0.35);
+  background-color: #086aa2;
+}
+
+/* Premium Form Elements */
+input[type="text"], input[type="email"], input[type="tel"], input[type="number"], select, textarea {
+  transition: all 0.2s ease-in-out;
+  border: 1px solid #d1d5db;
+}
+input[type="text"]:focus, input[type="email"]:focus, input[type="tel"]:focus, input[type="number"]:focus, select:focus, textarea:focus {
+  border-color: var(--primary) !important;
+  box-shadow: 0 0 0 3px rgba(10, 125, 190, 0.12) !important;
+  outline: none !important;
+}
+
+/* Glassmorphism Navigation */
+.glass-panel {
+  background-color: var(--bg-dark-blue);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+}
+
+/* Structured Corporate Cards & Panels */
+.glass-card {
+  background-color: #ffffff;
+  border: 1px solid rgba(229, 231, 235, 0.7);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.015), 0 10px 30px rgba(2, 20, 53, 0.035);
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.glass-card-hover:hover {
+  transform: translateY(-5px);
+  border-color: rgba(10, 125, 190, 0.2);
+  box-shadow: 0 16px 36px rgba(2, 20, 53, 0.06), 0 4px 10px rgba(0, 0, 0, 0.02);
+}
+
+.glass-card-hover:hover i[data-lucide] {
+  transform: scale(1.08);
+  transition: transform 0.2s ease-in-out;
+}
+
+.bg-mesh {
+  background-image: var(--mesh-gradient);
+}
+
+.text-gradient {
+  background-clip: text;
+  -webkit-background-clip: text;
+  color: transparent;
+  background-image: linear-gradient(135deg, var(--primary), #031d40);
+}
+
+/* Animations */
+@keyframes float {
+  0% { transform: translateY(0px); }
+  50% { transform: translateY(-8px); }
+  100% { transform: translateY(0px); }
+}
+
+.animate-float {
+  animation: float 5s ease-in-out infinite;
+}
+
+/* Scroll Reveal Animations */
+.reveal-on-scroll {
+  opacity: 0;
+  transform: translateY(16px);
+  transition: opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1), transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.reveal-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.delay-100 { transition-delay: 100ms; }
+.delay-200 { transition-delay: 200ms; }
+.delay-300 { transition-delay: 300ms; }
+.delay-400 { transition-delay: 400ms; }
+.delay-500 { transition-delay: 500ms; }
+
+/* Custom Range Sliders */
+input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: var(--primary);
+  cursor: pointer;
+  box-shadow: 0 0 8px rgba(10, 125, 190, 0.3);
+  transition: transform 0.1s ease, background-color 0.2s;
+}
+
+input[type="range"]::-webkit-slider-thumb:hover {
+  transform: scale(1.15);
+  background: var(--bg-dark-blue-light);
+}
+
+/* FAQ Accordion */
+.faq-content {
+  max-height: 0;
+  overflow: hidden;
+  opacity: 0;
+  transition: max-height 0.3s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.3s ease, margin-top 0.3s ease;
+}
+
+.faq-item.active .faq-content {
+  max-height: 300px;
+  opacity: 1;
+  margin-top: 12px;
+}
+
+.faq-chevron {
+  transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), color 0.2s;
+}
+
+.faq-item.active .faq-chevron {
+  transform: rotate(180deg);
+  color: var(--primary);
+}
+
+/* Custom Scrollbars */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: #f1f5f9;
+}
+::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}
+
+/* Premium Tech Grid overlay */
+.bg-grid {
+  position: relative;
+}
+.bg-grid::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -10;
+  pointer-events: none;
+  background-size: 32px 32px;
+  background-image: 
+    linear-gradient(to right, rgba(10, 125, 190, 0.015) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(10, 125, 190, 0.015) 1px, transparent 1px);
+  mask-image: radial-gradient(circle at center, black, transparent 90%);
+  -webkit-mask-image: radial-gradient(circle at center, black, transparent 90%);
+}
+
+/* Credit Bar Colors */
+.credit-level {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+.credit-level .bar-pill {
+  width: 100%;
+  height: 8px;
+  border-radius: 999px;
+  background-color: #e5e7eb;
+  transition: background-color 0.3s ease;
+}
+.credit-level.active-excellent .bar-pill { background-color: var(--buddy-green); }
+.credit-level.active-good .bar-pill { background-color: var(--accent-yellow); }
+.credit-level.active-fair .bar-pill { background-color: var(--buddy-orange); }
+.credit-level.active-poor .bar-pill { background-color: var(--buddy-red); }
+
+/* Custom Carousel CSS */
+.buddy-slider {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
+.buddy-slides {
+  display: flex;
+  width: 300%;
+  height: 100%;
+  transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.buddy-slide {
+  width: 33.3333%;
+  height: 100%;
+  flex-shrink: 0;
+}
+
+.buddy-dots {
+  position: absolute;
+  bottom: 12px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 8px;
+  z-index: 20;
+}
+
+.buddy-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background-color: rgba(255, 255, 255, 0.35);
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.buddy-dot.active {
+  background-color: var(--accent-yellow);
+  transform: scale(1.2);
+  width: 18px;
+  border-radius: 4px;
+}
+
+/* Hover effects for services */
+.loan-card {
+  background: white;
+  border-radius: 20px;
+  padding: 24px;
+  border: 1px solid #f1f3f7;
+  transition: all 0.3s ease;
+}
+.loan-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 10px 25px rgba(2, 20, 53, 0.05);
+  border-color: #0a7dbe20;
+}
+
+.loan-icon-wrapper {
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+}
+
+.loan-card:hover .loan-icon-wrapper {
+  transform: scale(1.08);
+}
+
+/* Multi-Step Form wizard & selection cards */
+.step-pane {
+  display: none;
+}
+.step-pane.active {
+  display: block;
+  animation: fadeIn 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.select-card {
+  border: 1px solid #e2e8f0;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.select-card:hover {
+  border-color: var(--primary);
+  background-color: rgba(10, 125, 190, 0.02);
+  transform: translateY(-2px);
+}
+.select-card.active {
+  border-color: var(--primary);
+  background-color: rgba(10, 125, 190, 0.05);
+  box-shadow: 0 0 0 3px rgba(10, 125, 190, 0.15);
+}
+
+/* Custom dashboard styles */
+.dashboard-glow {
+  position: relative;
+}
+.dashboard-glow::after {
+  content: '';
+  position: absolute;
+  top: -10%;
+  left: -10%;
+  width: 120%;
+  height: 120%;
+  background: radial-gradient(circle, rgba(10, 125, 190, 0.04) 0%, transparent 70%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* Status tracker line */
+.tracker-node.active .tracker-dot {
+  background-color: var(--primary);
+  box-shadow: 0 0 0 4px rgba(10, 125, 190, 0.2);
+}
+.tracker-node.completed .tracker-dot {
+  background-color: var(--buddy-green);
+  box-shadow: 0 0 0 4px rgba(29, 184, 122, 0.2);
+}
+
+/* Simulated Credit Score Radial Progress */
+.radial-progress {
+  position: relative;
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  background: conic-gradient(var(--buddy-green) calc(74.5 * 3.6deg), #e2e8f0 0deg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.radial-progress::after {
+  content: '';
+  position: absolute;
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  background: white;
+}
+.radial-progress-content {
+  position: relative;
+  z-index: 10;
+  text-align: center;
+}
+

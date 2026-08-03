@@ -1,0 +1,44 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="260" viewBox="0 0 1200 260" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="g1" x1="0" x2="1">
+      <stop offset="0%" stop-color="#042232" />
+      <stop offset="50%" stop-color="#073243" />
+      <stop offset="100%" stop-color="#002a3a" />
+    </linearGradient>
+    <linearGradient id="g2" x1="0" x2="1">
+      <stop offset="0%" stop-color="#00D4FF" stop-opacity="0.9"/>
+      <stop offset="100%" stop-color="#00E676" stop-opacity="0.85"/>
+    </linearGradient>
+    <filter id="f1" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="30" result="b"/>
+      <feBlend in="SourceGraphic" in2="b"/>
+    </filter>
+  </defs>
+  <rect width="1200" height="260" fill="url(#g1)" />
+  <g filter="url(#f1)">
+    <circle cx="980" cy="60" r="120" fill="#00D4FF" fill-opacity="0.06" />
+    <circle cx="1060" cy="180" r="80" fill="#00E676" fill-opacity="0.05" />
+    <rect x="40" y="30" width="520" height="200" rx="20" fill="url(#g2)" fill-opacity="0.06" />
+  </g>
+  <g transform="translate(60,50)">
+    <text x="0" y="34" font-family="Inter, Arial, Helvetica, sans-serif" font-size="28" fill="#E6FBFF" font-weight="700">Premium Verified Leads</text>
+    <text x="0" y="72" font-family="Inter, Arial, Helvetica, sans-serif" font-size="20" fill="#C6F7FF">High-intent, consent-based finance leads for NBFCs & DSAs</text>
+    <rect x="0" y="90" width="220" height="44" rx="22" fill="#00D4FF"/>
+    <text x="110" y="120" font-family="Inter, Arial, Helvetica, sans-serif" font-size="15" fill="#071425" font-weight="700" text-anchor="middle">Get Offer</text>
+    <g transform="translate(260,22)">
+      <rect x="0" y="0" width="64" height="64" rx="12" fill="#071425" opacity="0.12"/>
+      <path d="M8 36 L24 20 L40 36" stroke="#00E676" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+    </g>
+  </g>
+  <g transform="translate(640,38)">
+    <rect x="0" y="0" width="480" height="180" rx="16" fill="rgba(255,255,255,0.02)" stroke="rgba(255,255,255,0.04)"/>
+    <g transform="translate(18,18)">
+      <text x="0" y="0" font-family="Inter, Arial, Helvetica, sans-serif" font-size="18" fill="#AEEAFF" font-weight="700">50K+ Leads Delivered</text>
+      <text x="0" y="30" font-family="Inter, Arial, Helvetica, sans-serif" font-size="14" fill="#98DFF0">Fresh, consent-based, and verified — delivered fast.</text>
+      <g transform="translate(0,60)">
+        <rect x="0" y="0" width="120" height="36" rx="18" fill="#00D4FF"/>
+        <text x="60" y="24" font-family="Inter, Arial, Helvetica, sans-serif" font-size="14" fill="#071425" font-weight="700" text-anchor="middle">Contact Us</text>
+      </g>
+    </g>
+  </g>
+</svg>

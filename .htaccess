@@ -1,0 +1,28 @@
+# AavivaCred Enterprise URL Routing & Security Rewrite Rules
+DirectoryIndex index.php
+
+RewriteEngine On
+
+# Sitemap Rewrite
+RewriteRule ^sitemap\.xml$ sitemap.php [L,QSA]
+
+# Blog Routing
+RewriteRule ^blog/?$ pages/blog.php [L,QSA]
+RewriteRule ^blog/([a-zA-Z0-9-]+)/?$ pages/blog-post.php?slug=$1 [L,QSA]
+
+# Admin Panel Routing
+RewriteRule ^admin/?$ admin/index.php [L,QSA]
+
+# Loan Product Clean Routes
+RewriteRule ^(personal-loan|instant-loan|marriage-loan|travel-loan|medical-loan|business-loan|gold-loan|home-loan|car-loan|two-wheeler-loan|education-loan|payday-loan|edi-loan)$ pages/loan-product.php?type=$1 [L,QSA]
+
+# Application Form Route
+RewriteRule ^(apply|apply\.php)$ pages/apply.php [L,QSA]
+
+# Aadhaar Callback Route
+RewriteRule ^(api_aadhar_callback)$ api_aadhar_callback.php [L,QSA]
+
+# Fallback for existing files or directories
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^.*$ index.php [L,QSA]
