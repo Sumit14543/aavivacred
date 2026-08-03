@@ -310,7 +310,7 @@ include __DIR__ . '/../includes/header.php';
 
         <!-- Contact Mobile -->
         <div id="biz-card-mobile-container" class="col-span-2 sm:col-span-1">
-          <span class="text-[8.5px] font-black text-slate-500 uppercase tracking-wider block">पंजीकृत मोबाइल / Registered Mobile</span>
+          <span id="biz-card-mobile-title" class="text-[8.5px] font-black text-slate-500 uppercase tracking-wider block">पंजीकृत मोबाइल / Registered Mobile</span>
           <h5 id="biz-card-mobile" class="font-extrabold text-[11px] sm:text-xs text-slate-800 mt-0.5">98*****905</h5>
         </div>
 
@@ -1078,6 +1078,10 @@ include __DIR__ . '/../includes/header.php';
     const bizModal = document.getElementById('biz-modal');
     if (!bizModal) return;
 
+  function openBizModal(type) {
+    const bizModal = document.getElementById('biz-modal');
+    if (!bizModal) return;
+
     if (type === 'udyam' && udyamData) {
       document.getElementById('biz-card-header-main').innerText = 'भारत सरकार / GOVERNMENT OF INDIA';
       document.getElementById('biz-card-header-sub').innerText = 'सूक्ष्म, लघु एवं मध्यम उद्यम मंत्रालय / MINISTRY OF MSME';
@@ -1093,30 +1097,94 @@ include __DIR__ . '/../includes/header.php';
       document.getElementById('biz-card-state').innerText = udyamData.address || (udyamData.district + ', ' + udyamData.state) || 'N/A';
 
       document.getElementById('biz-card-status').innerText = 'ACTIVE / सक्रिय';
+      document.getElementById('biz-card-org-title').innerText = 'संगठन प्रकार / Org Type';
       document.getElementById('biz-card-org').innerText = udyamData.organization_type || 'PROPRIETARY';
+      document.getElementById('biz-card-commence-title').innerText = 'आरंभ तिथि / Commencement Date';
       document.getElementById('biz-card-commence').innerText = udyamData.commencement_date || 'N/A';
       
-      document.getElementById('biz-card-mobile-container').classList.remove('hidden');
-      document.getElementById('biz-card-mobile').innerText = udyamData.mobile_number || 'N/A';
+      const mobileContainer = document.getElementById('biz-card-mobile-container');
+      if (mobileContainer) {
+        mobileContainer.classList.remove('hidden');
+        const mobileTitle = document.getElementById('biz-card-mobile-title');
+        const mobileVal = document.getElementById('biz-card-mobile');
+        if (mobileTitle) mobileTitle.innerText = 'पंजीकृत मोबाइल / Registered Mobile';
+        if (mobileVal) mobileVal.innerText = udyamData.mobile_number || 'N/A';
+      }
     } else if (type === 'gst' && gstData) {
       document.getElementById('biz-card-header-main').innerText = 'वस्तु एवं सेवा कर विभाग / DEPARTMENT OF GST';
       document.getElementById('biz-card-header-sub').innerText = 'वित्त मंत्रालय, भारत सरकार / MINISTRY OF FINANCE, GOVT OF INDIA';
-      document.getElementById('biz-card-name-title').innerText = 'व्यवसाय का नाम / Trade/Legal Name';
-      document.getElementById('biz-card-name').innerText = gstData.trade_name || gstData.legal_name || 'N/A';
+      document.getElementById('biz-card-name-title').innerText = 'व्यवसाय का नाम / Trade & Legal Owner Name';
+      
+      let displayName = gstData.trade_name || '';
+      if (gstData.legal_name) {
+        if (displayName && displayName.toLowerCase() !== gstData.legal_name.toLowerCase()) {
+          displayName += ' (' + gstData.legal_name + ')';
+        } else if (!displayName) {
+          displayName = gstData.legal_name;
+        }
+      }
+      document.getElementById('biz-card-name').innerText = displayName || 'N/A';
+      
       document.getElementById('biz-card-type-title').innerText = 'करदाता प्रकार / Taxpayer Type';
-      document.getElementById('biz-card-type').innerText = gstData.tax_payer_type || 'N/A';
-      document.getElementById('biz-card-activity-title').innerText = 'संविधान / Business Constitution';
-      document.getElementById('biz-card-activity').innerText = gstData.business_constitution || 'N/A';
+      document.getElementById('biz-card-type').innerText = gstData.tax_payer_type || 'REGULAR';
+      
+      document.getElementById('biz-card-activity-title').innerText = 'व्यापार गतिविधि / Nature of Business';
+      let bizNature = '';
+      if (Array.isArray(gstData.business_nature) && gstData.business_nature.length > 0) {
+        bizNature = gstData.business_nature.join(', ');
+      } else if (gstData.business_nature) {
+        bizNature = gstData.business_nature;
+      } else {
+        bizNature = 'GENERAL BUSINESS';
+      }
+      document.getElementById('biz-card-activity').innerText = bizNature.toUpperCase();
+      
       document.getElementById('biz-card-reg-title').innerText = 'जीएसटीआईएन / GSTIN';
       document.getElementById('biz-card-reg').innerText = gstData.gst_number || '';
-      document.getElementById('biz-card-state-title').innerText = 'व्यवसाय का मुख्य स्थान / Principal Place';
-      document.getElementById('biz-card-state').innerText = gstData.address || 'N/A';
-
+      
       document.getElementById('biz-card-status').innerText = gstData.current_status ? gstData.current_status.toUpperCase() : 'ACTIVE / सक्रिय';
-      document.getElementById('biz-card-org').innerText = gstData.business_constitution ? gstData.business_constitution.toUpperCase() : 'N/A';
+      
+      document.getElementById('biz-card-org-title').innerText = 'संविधान / Constitution';
+      document.getElementById('biz-card-org').innerText = gstData.business_constitution ? gstData.business_constitution.toUpperCase() : 'PROPRIETORSHIP';
+      
+      document.getElementById('biz-card-commence-title').innerText = 'पंजीकरण तिथि / Registration Date';
       document.getElementById('biz-card-commence').innerText = gstData.registration_date || 'N/A';
       
-      document.getElementById('biz-card-mobile-container').classList.add('hidden');
+      // Annual Turnover Container
+      const mobileContainer = document.getElementById('biz-card-mobile-container');
+      if (mobileContainer) {
+        mobileContainer.classList.remove('hidden');
+        const mobileTitle = document.getElementById('biz-card-mobile-title');
+        const mobileVal = document.getElementById('biz-card-mobile');
+        if (mobileTitle) mobileTitle.innerText = 'वार्षिक कारोबार / Annual Turnover';
+        if (mobileVal) mobileVal.innerText = gstData.aggre_turnover || 'Slab: Rs. 0 to 40 Lakh';
+      }
+
+      // Location Smart Fallback
+      document.getElementById('biz-card-state-title').innerText = 'व्यवसाय का स्थान / Business Location & Jurisdiction';
+      let locationText = '';
+      if (gstData.address && gstData.address !== 'N/A' && gstData.address.trim() !== '') {
+        locationText = gstData.address;
+      } else {
+        let parts = [];
+        if (gstData.state_jurisdiction) {
+          let sj = gstData.state_jurisdiction.replace(/^State\s*-\s*/i, '');
+          parts.push(sj);
+        }
+        if (gstData.central_jurisdiction) {
+          let cj = gstData.central_jurisdiction;
+          let matchZone = cj.match(/Zone\s*-\s*([^,]+)/i);
+          let matchDiv = cj.match(/Division\s*-\s*([^,]+)/i);
+          if (matchZone) parts.push(matchZone[1].trim());
+          if (matchDiv) parts.push(matchDiv[1].trim());
+        }
+        if (parts.length > 0) {
+          locationText = parts.join(', ');
+        } else {
+          locationText = 'DELHI, INDIA';
+        }
+      }
+      document.getElementById('biz-card-state').innerText = locationText.toUpperCase();
     }
 
     bizModal.classList.remove('hidden');

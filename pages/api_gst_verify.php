@@ -101,7 +101,9 @@ echo json_encode([
         'aggre_turnover_fy' => $result['aggre_turnover_fy'] ?? '',
         'owners' => $result['owners'] ?? [],
         'business_nature' => $result['business_nature'] ?? [],
-        'e_invoice' => $result['E-Invoice'] ?? ''
+        'e_invoice' => $result['E-Invoice'] ?? '',
+        'central_jurisdiction' => $result['central_jurisdiction'] ?? '',
+        'state_jurisdiction' => $result['state_jurisdiction'] ?? ''
     ],
     'raw_response' => $resData
 ]);
