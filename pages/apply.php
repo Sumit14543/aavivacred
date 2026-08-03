@@ -1655,12 +1655,13 @@ include __DIR__ . '/../includes/header.php';
             if (res.data.enterprise_name) {
               document.getElementById('input-business-name').value = res.data.enterprise_name;
             }
-            if (res.data.owner_name) {
-              document.getElementById('input-legal-owner-name').value = res.data.owner_name;
+            const ownerVal = res.data.owner_name || panName || res.data.organization_type || '';
+            if (ownerVal && ownerVal !== 'N/A') {
+              document.getElementById('input-legal-owner-name').value = ownerVal;
             }
-            if (res.data.major_activity || res.data.enterprise_type) {
-              const actStr = [res.data.major_activity, res.data.enterprise_type].filter(Boolean).join(' - ');
-              document.getElementById('input-business-nature').value = actStr;
+            const natParts = [res.data.major_activity, res.data.enterprise_type, res.data.organization_type].filter(x => x && x !== 'N/A');
+            if (natParts.length > 0) {
+              document.getElementById('input-business-nature').value = natParts.join(' - ');
             }
             if (typeof saveSessionState === 'function') saveSessionState();
             document.getElementById('udyam-status-text').innerText = 'Udyam Registration Verified: ' + res.data.enterprise_name;

@@ -156,9 +156,11 @@ if ($resData && isset($resData['error']) && $resData['error'] === false && !empt
     }
     
     if (session_status() === PHP_SESSION_NONE) { session_start(); }
+    $ownerVal = !empty($details['name_of_applicant']) ? $details['name_of_applicant'] : (!empty($_SESSION['pan_name']) ? $_SESSION['pan_name'] : $organizationType);
     $_SESSION['lead_values']['udyam_number'] = $udyam;
     $_SESSION['lead_values']['business_name'] = $enterpriseName;
-    $_SESSION['lead_values']['business_nature'] = $majorActivity . ' - ' . $enterpriseType;
+    $_SESSION['lead_values']['legal_owner_name'] = $ownerVal;
+    $_SESSION['lead_values']['business_nature'] = $majorActivity . ' (' . $enterpriseType . ' - ' . $organizationType . ')';
 
     echo json_encode([
         'error' => false,
@@ -166,11 +168,12 @@ if ($resData && isset($resData['error']) && $resData['error'] === false && !empt
         'data' => [
             'udyam_number' => $udyam,
             'enterprise_name' => $enterpriseName,
+            'owner_name' => $ownerVal,
             'enterprise_type' => $enterpriseType,
             'major_activity' => $majorActivity,
+            'organization_type' => $organizationType,
             'state' => $state,
             'district' => $district,
-            'organization_type' => $organizationType,
             'commencement_date' => $commenceDate,
             'registration_date' => $regDate,
             'mobile_number' => $mobile,
