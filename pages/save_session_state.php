@@ -17,6 +17,7 @@ if (is_array($data)) {
     $allowedKeys = [
         'name', 'email', 'mobile', 'category', 'city', 'loan_amount',
         'employment_type', 'monthly_income', 'pan_number', 'udyam_number', 'gst_number',
+        'business_name', 'legal_owner_name', 'business_nature', 'gst_turnover',
         'aadhaar_number', 'ifsc_code', 'bank_name', 'account_number', 'message'
     ];
 

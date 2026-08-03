@@ -445,6 +445,10 @@ include __DIR__ . '/../includes/header.php';
         <!-- MULTI-STEP FORM -->
         <form id="apply-form" method="POST" action="apply.php" enctype="multipart/form-data">
           <?php echo \AavivaCred\Security\Security::csrfField(); ?>
+          <input type="hidden" id="input-business-name" name="business_name" value="<?php echo htmlspecialchars($values['business_name'] ?? ''); ?>">
+          <input type="hidden" id="input-legal-owner-name" name="legal_owner_name" value="<?php echo htmlspecialchars($values['legal_owner_name'] ?? ''); ?>">
+          <input type="hidden" id="input-business-nature" name="business_nature" value="<?php echo htmlspecialchars($values['business_nature'] ?? ''); ?>">
+          <input type="hidden" id="input-gst-turnover" name="gst_turnover" value="<?php echo htmlspecialchars($values['gst_turnover'] ?? ''); ?>">
 
           <!-- STEP 1: CONTACT VERIFICATION -->
           <div id="step-1" class="step-container space-y-6 text-left">
@@ -1598,6 +1602,17 @@ include __DIR__ . '/../includes/header.php';
           if (res && !res.error && res.data) {
             isUdyamVerified = true;
             udyamData = res.data;
+            if (res.data.enterprise_name) {
+              document.getElementById('input-business-name').value = res.data.enterprise_name;
+            }
+            if (res.data.owner_name) {
+              document.getElementById('input-legal-owner-name').value = res.data.owner_name;
+            }
+            if (res.data.major_activity || res.data.enterprise_type) {
+              const actStr = [res.data.major_activity, res.data.enterprise_type].filter(Boolean).join(' - ');
+              document.getElementById('input-business-nature').value = actStr;
+            }
+            if (typeof saveSessionState === 'function') saveSessionState();
             document.getElementById('udyam-status-text').innerText = 'Udyam Registration Verified: ' + res.data.enterprise_name;
             document.getElementById('udyam-status-badge').classList.remove('hidden');
             openBizModal('udyam');
@@ -1642,6 +1657,21 @@ include __DIR__ . '/../includes/header.php';
           if (res && !res.error && res.data) {
             isGstVerified = true;
             gstData = res.data;
+            const bizName = res.data.trade_name || res.data.legal_name || '';
+            if (bizName) {
+              document.getElementById('input-business-name').value = bizName;
+            }
+            if (res.data.legal_name) {
+              document.getElementById('input-legal-owner-name').value = res.data.legal_name;
+            }
+            if (res.data.business_nature) {
+              const natureStr = Array.isArray(res.data.business_nature) ? res.data.business_nature.join(', ') : res.data.business_nature;
+              document.getElementById('input-business-nature').value = natureStr;
+            }
+            if (res.data.aggre_turnover) {
+              document.getElementById('input-gst-turnover').value = res.data.aggre_turnover;
+            }
+            if (typeof saveSessionState === 'function') saveSessionState();
             document.getElementById('gst-status-text').innerText = 'GSTIN Verified: ' + (res.data.trade_name || res.data.legal_name);
             document.getElementById('gst-status-badge').classList.remove('hidden');
             openBizModal('gst');

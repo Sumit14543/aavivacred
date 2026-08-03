@@ -49,6 +49,10 @@ class LeadService {
         $panNumber       = strtoupper(Security::sanitize($postData['pan_number'] ?? ''));
         $udyamNumber     = strtoupper(Security::sanitize($postData['udyam_number'] ?? ''));
         $gstNumber       = strtoupper(Security::sanitize($postData['gst_number'] ?? ''));
+        $businessName    = Security::sanitize($postData['business_name'] ?? '');
+        $legalOwnerName  = Security::sanitize($postData['legal_owner_name'] ?? '');
+        $businessNature  = Security::sanitize($postData['business_nature'] ?? '');
+        $gstTurnover     = Security::sanitize($postData['gst_turnover'] ?? '');
         $aadhaarNumber   = Security::sanitize($postData['aadhaar_number'] ?? '');
         $ifscCode        = strtoupper(Security::sanitize($postData['ifsc_code'] ?? ''));
         $bankName        = Security::sanitize($postData['bank_name'] ?? '');
@@ -118,6 +122,10 @@ class LeadService {
             'pan_number'      => $panNumber,
             'udyam_number'    => $udyamNumber,
             'gst_number'      => $gstNumber,
+            'business_name'   => $businessName,
+            'legal_owner_name'=> $legalOwnerName,
+            'business_nature' => $businessNature,
+            'gst_turnover'    => $gstTurnover,
             'aadhaar_number'  => $aadhaarNumber,
             'ifsc_code'       => $ifscCode,
             'bank_name'       => $bankName,

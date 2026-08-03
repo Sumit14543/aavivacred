@@ -70,7 +70,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
         header('Content-Type: text/csv; charset=utf-8');
         header('Content-Disposition: attachment; filename=aavivacred_selected_leads_' . date('Y-m-d_H-i') . '.csv');
         $output = fopen('php://output', 'w');
-        fputcsv($output, ['Lead ID', 'Submitted At', 'Applicant Name', 'Mobile Number', 'Email Address', 'City', 'Loan Category', 'Loan Amount (INR)', 'Employment Type', 'Monthly Income (INR)', 'PAN Number', 'Aadhaar Number', 'Udyam Registration No.', 'GSTIN Number', 'Bank Name', 'IFSC Code', 'Account Number', 'Assigned Partner', 'Status']);
+        fputcsv($output, ['Lead ID', 'Submitted At', 'Applicant Name', 'Mobile Number', 'Email Address', 'City', 'Loan Category', 'Loan Amount (INR)', 'Employment Type', 'Monthly Income (INR)', 'PAN Number', 'Aadhaar Number', 'Udyam Registration No.', 'GSTIN Number', 'Business / Firm Name', 'Owner Legal Name', 'Business Nature', 'GST Turnover Slab', 'Bank Name', 'IFSC Code', 'Account Number', 'Assigned Partner', 'Status']);
         foreach ($filtered as $lead) {
             fputcsv($output, [
                 $lead['lead_id'] ?? ('AVV-' . $lead['id']),
@@ -87,6 +87,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
                 $lead['aadhaar_number'] ?? '',
                 $lead['udyam_number'] ?? '',
                 $lead['gst_number'] ?? '',
+                $lead['business_name'] ?? '',
+                $lead['legal_owner_name'] ?? '',
+                $lead['business_nature'] ?? '',
+                $lead['gst_turnover'] ?? '',
                 $lead['bank_name'] ?? '',
                 strtoupper($lead['ifsc_code'] ?? ''),
                 $lead['account_number'] ?? '',
@@ -116,7 +120,7 @@ if (isset($_GET['export']) && $_GET['export'] === 'csv') {
     header('Content-Type: text/csv; charset=utf-8');
     header('Content-Disposition: attachment; filename=aavivacred_all_leads_' . date('Y-m-d_H-i') . '.csv');
     $output = fopen('php://output', 'w');
-    fputcsv($output, ['Lead ID', 'Submitted At', 'Applicant Name', 'Mobile Number', 'Email Address', 'City', 'Loan Category', 'Loan Amount (INR)', 'Employment Type', 'Monthly Income (INR)', 'PAN Number', 'Aadhaar Number', 'Udyam Registration No.', 'GSTIN Number', 'Bank Name', 'IFSC Code', 'Account Number', 'Assigned Partner', 'Status']);
+    fputcsv($output, ['Lead ID', 'Submitted At', 'Applicant Name', 'Mobile Number', 'Email Address', 'City', 'Loan Category', 'Loan Amount (INR)', 'Employment Type', 'Monthly Income (INR)', 'PAN Number', 'Aadhaar Number', 'Udyam Registration No.', 'GSTIN Number', 'Business / Firm Name', 'Owner Legal Name', 'Business Nature', 'GST Turnover Slab', 'Bank Name', 'IFSC Code', 'Account Number', 'Assigned Partner', 'Status']);
     foreach ($leads as $lead) {
         fputcsv($output, [
             $lead['lead_id'] ?? ('AVV-' . $lead['id']),
@@ -133,6 +137,10 @@ if (isset($_GET['export']) && $_GET['export'] === 'csv') {
             $lead['aadhaar_number'] ?? '',
             $lead['udyam_number'] ?? '',
             $lead['gst_number'] ?? '',
+            $lead['business_name'] ?? '',
+            $lead['legal_owner_name'] ?? '',
+            $lead['business_nature'] ?? '',
+            $lead['gst_turnover'] ?? '',
             $lead['bank_name'] ?? '',
             strtoupper($lead['ifsc_code'] ?? ''),
             $lead['account_number'] ?? '',
@@ -227,11 +235,11 @@ $leads = $service->getLeads($search, $category, $status, $assignedTo);
         <header class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-6">
             <div>
                 <h1 class="text-xl sm:text-2xl font-black text-slate-900 dark:text-white tracking-tight">Lead Portal & Full Data Studio</h1>
-                <p class="text-xs text-slate-500 dark:text-slate-400 font-medium mt-0.5">Scroll horizontally to view all applicant details (Personal, Business, KYC & Bank Account info)</p>
+                <p class="text-xs text-slate-500 dark:text-slate-400 font-medium mt-0.5">Scroll horizontally to view all applicant details (Personal, Business, Udyam, GST & Bank Account info)</p>
             </div>
             <div>
                 <a href="leads.php?export=csv" class="px-3.5 py-2 bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold rounded-xl text-xs flex items-center gap-1.5 shadow-sm transition">
-                    <i data-lucide="file-spread-sheet" class="w-3.5 h-3.5"></i> Export All CSV (19 Fields)
+                    <i data-lucide="file-spread-sheet" class="w-3.5 h-3.5"></i> Export All CSV (Full Details)
                 </a>
             </div>
         </header>
@@ -248,12 +256,12 @@ $leads = $service->getLeads($search, $category, $status, $assignedTo);
                 
                 <!-- Search Box -->
                 <div class="md:col-span-4 space-y-1">
-                    <label class="block text-[10px] font-black uppercase tracking-wider text-slate-500 dark:text-slate-400">Search Applicant / Lead ID / Mobile</label>
+                    <label class="block text-[10px] font-black uppercase tracking-wider text-slate-500 dark:text-slate-400">Search Applicant / Business / Lead ID / Mobile</label>
                     <div class="relative flex items-center">
                         <span class="absolute left-3 text-slate-400">
                             <i data-lucide="search" class="w-3.5 h-3.5"></i>
                         </span>
-                        <input type="text" name="search" value="<?php echo htmlspecialchars($search); ?>" placeholder="Search by name, mobile, email, PAN..." class="w-full pl-9 pr-3 py-2 bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-xl text-xs font-bold text-slate-800 dark:text-white placeholder-slate-400 focus:outline-none focus:border-amber-400">
+                        <input type="text" name="search" value="<?php echo htmlspecialchars($search); ?>" placeholder="Search by name, mobile, email, PAN, GST..." class="w-full pl-9 pr-3 py-2 bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-xl text-xs font-bold text-slate-800 dark:text-white placeholder-slate-400 focus:outline-none focus:border-amber-400">
                     </div>
                 </div>
 
@@ -313,7 +321,7 @@ $leads = $service->getLeads($search, $category, $status, $assignedTo);
             <?php echo \AavivaCred\Security\Security::csrfField(); ?>
             <input type="hidden" name="action" id="bulk-action-type" value="bulk_assign">
 
-            <!-- Horizontally Scrollable Leads Table (All Form Columns in Same Row) -->
+            <!-- Horizontally Scrollable Leads Table (All Form & Business Verification Columns in Same Row) -->
             <div class="bg-white dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-2xl overflow-hidden shadow-sm">
                 <div class="overflow-x-auto whitespace-nowrap">
                     <table class="w-full text-left text-xs text-slate-700 dark:text-slate-300">
@@ -336,6 +344,10 @@ $leads = $service->getLeads($search, $category, $status, $assignedTo);
                                 <th class="p-3">Aadhaar Number</th>
                                 <th class="p-3">Udyam Reg. Number</th>
                                 <th class="p-3">GSTIN Number</th>
+                                <th class="p-3">Business / Firm Name</th>
+                                <th class="p-3">Owner Legal Name</th>
+                                <th class="p-3">Business Nature / Type</th>
+                                <th class="p-3">GST Turnover Slab</th>
                                 <th class="p-3">Bank Name</th>
                                 <th class="p-3">IFSC Code</th>
                                 <th class="p-3">Account Number</th>
@@ -347,7 +359,7 @@ $leads = $service->getLeads($search, $category, $status, $assignedTo);
                         <tbody class="divide-y divide-slate-100 dark:divide-white/5">
                             <?php if (empty($leads)): ?>
                                 <tr>
-                                    <td colspan="21" class="p-6 text-center text-slate-400 font-medium">No lead applications matched your search criteria.</td>
+                                    <td colspan="25" class="p-6 text-center text-slate-400 font-medium">No lead applications matched your search criteria.</td>
                                 </tr>
                             <?php else: ?>
                                 <?php foreach ($leads as $lead): ?>
@@ -453,6 +465,42 @@ $leads = $service->getLeads($search, $category, $status, $assignedTo);
                                                 <span class="px-2.5 py-1 rounded bg-emerald-500/10 border border-emerald-500/20">
                                                     <?php echo htmlspecialchars($lead['gst_number']); ?>
                                                 </span>
+                                            <?php else: ?>
+                                                <span class="text-slate-400 font-normal">—</span>
+                                            <?php endif; ?>
+                                        </td>
+
+                                        <!-- Business / Firm Name -->
+                                        <td class="p-3 font-extrabold text-amber-500 dark:text-amber-300 text-xs">
+                                            <?php if (!empty($lead['business_name'])): ?>
+                                                🏢 <?php echo htmlspecialchars($lead['business_name']); ?>
+                                            <?php else: ?>
+                                                <span class="text-slate-400 font-normal">—</span>
+                                            <?php endif; ?>
+                                        </td>
+
+                                        <!-- Owner Legal Name -->
+                                        <td class="p-3 text-xs font-bold text-slate-800 dark:text-slate-200">
+                                            <?php if (!empty($lead['legal_owner_name'])): ?>
+                                                👤 <?php echo htmlspecialchars($lead['legal_owner_name']); ?>
+                                            <?php else: ?>
+                                                <span class="text-slate-400 font-normal">—</span>
+                                            <?php endif; ?>
+                                        </td>
+
+                                        <!-- Business Nature / Type -->
+                                        <td class="p-3 text-xs font-semibold text-slate-700 dark:text-slate-300">
+                                            <?php if (!empty($lead['business_nature'])): ?>
+                                                🏭 <?php echo htmlspecialchars($lead['business_nature']); ?>
+                                            <?php else: ?>
+                                                <span class="text-slate-400 font-normal">—</span>
+                                            <?php endif; ?>
+                                        </td>
+
+                                        <!-- GST Turnover Slab -->
+                                        <td class="p-3 text-xs font-bold text-emerald-600 dark:text-emerald-400">
+                                            <?php if (!empty($lead['gst_turnover'])): ?>
+                                                📊 <?php echo htmlspecialchars($lead['gst_turnover']); ?>
                                             <?php else: ?>
                                                 <span class="text-slate-400 font-normal">—</span>
                                             <?php endif; ?>
