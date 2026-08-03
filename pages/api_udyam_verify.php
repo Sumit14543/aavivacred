@@ -155,6 +155,11 @@ if ($resData && isset($resData['error']) && $resData['error'] === false && !empt
         $fullAddress = ($district . ', ' . $state);
     }
     
+    if (session_status() === PHP_SESSION_NONE) { session_start(); }
+    $_SESSION['lead_values']['udyam_number'] = $udyam;
+    $_SESSION['lead_values']['business_name'] = $enterpriseName;
+    $_SESSION['lead_values']['business_nature'] = $majorActivity . ' - ' . $enterpriseType;
+
     echo json_encode([
         'error' => false,
         'message' => 'Udyam Verification Successful',

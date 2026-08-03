@@ -85,6 +85,13 @@ if (!$resData || (isset($resData['error']) && $resData['error'] === true) || !em
 // Format clean output response
 $result = $resData['data']['result'] ?? [];
 
+if (session_status() === PHP_SESSION_NONE) { session_start(); }
+$_SESSION['lead_values']['gst_number'] = $gst;
+$_SESSION['lead_values']['business_name'] = !empty($result['trade_name']) ? $result['trade_name'] : ($result['legal_name'] ?? '');
+$_SESSION['lead_values']['legal_owner_name'] = $result['legal_name'] ?? '';
+$_SESSION['lead_values']['business_nature'] = is_array($result['business_nature'] ?? null) ? implode(', ', $result['business_nature']) : ($result['business_nature'] ?? '');
+$_SESSION['lead_values']['gst_turnover'] = $result['aggre_turnover'] ?? '';
+
 echo json_encode([
     'error' => false,
     'message' => 'GST Verification Successful',

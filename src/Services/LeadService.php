@@ -35,6 +35,27 @@ class LeadService {
             ];
         }
 
+        // Merge saved session values & verified API data so nothing is lost
+        if (session_status() === PHP_SESSION_NONE) {
+            session_start();
+        }
+        if (isset($_SESSION['lead_values']) && is_array($_SESSION['lead_values'])) {
+            foreach ($_SESSION['lead_values'] as $k => $v) {
+                if (empty($postData[$k]) && !empty($v)) {
+                    $postData[$k] = $v;
+                }
+            }
+        }
+        if (empty($postData['aadhaar_number']) && !empty($_SESSION['last_aadhaar_num'])) {
+            $postData['aadhaar_number'] = $_SESSION['last_aadhaar_num'];
+        }
+        if (empty($postData['name']) && !empty($_SESSION['pan_name'])) {
+            $postData['name'] = $_SESSION['pan_name'];
+        }
+        if (empty($postData['email']) && !empty($_SESSION['email_otp_target'])) {
+            $postData['email'] = $_SESSION['email_otp_target'];
+        }
+
         $name            = Security::sanitize($postData['name'] ?? '');
         $email           = Security::sanitize($postData['email'] ?? '');
         $mobile          = Security::sanitize($postData['mobile'] ?? '');

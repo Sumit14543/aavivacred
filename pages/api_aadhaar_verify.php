@@ -15,6 +15,10 @@ if (strlen($aadhaar) !== 12) {
 $refId = 'AVR-ADHR-' . strtoupper(substr(md5(uniqid()), 0, 10));
 $_SESSION['last_aadhaar_ref'] = $refId;
 $_SESSION['last_aadhaar_num'] = $aadhaar;
+if (!isset($_SESSION['lead_values']) || !is_array($_SESSION['lead_values'])) {
+    $_SESSION['lead_values'] = [];
+}
+$_SESSION['lead_values']['aadhaar_number'] = $aadhaar;
 
 $token = getenv('BIFROST_API_TOKEN');
 if (!$token && isset($_ENV['BIFROST_API_TOKEN'])) {

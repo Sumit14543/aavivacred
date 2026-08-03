@@ -1361,7 +1361,51 @@ include __DIR__ . '/../includes/header.php';
     document.getElementById('amount-formatted').innerText = formatted;
   }
 
+  function saveSessionState() {
+    const getVal = (id) => {
+      const el = document.getElementById(id);
+      return el ? el.value.trim() : '';
+    };
+
+    const emailStep1 = getVal('input-email-step1');
+    const hiddenEmail = getVal('input-email');
+    const finalEmail = hiddenEmail || emailStep1;
+    const emailEl = document.getElementById('input-email');
+    if (emailEl && finalEmail) {
+      emailEl.value = finalEmail;
+    }
+
+    const currentData = {
+      mobile: getVal('input-mobile'),
+      email: finalEmail,
+      name: getVal('input-name'),
+      city: getVal('input-city'),
+      category: getVal('input-category'),
+      loan_amount: getVal('input-amount'),
+      employment_type: getVal('input-employment'),
+      monthly_income: getVal('input-income'),
+      pan_number: getVal('input-pan'),
+      udyam_number: getVal('input-udyam'),
+      gst_number: getVal('input-gst'),
+      business_name: getVal('input-business-name'),
+      legal_owner_name: getVal('input-legal-owner-name'),
+      business_nature: getVal('input-business-nature'),
+      gst_turnover: getVal('input-gst-turnover'),
+      aadhaar_number: getVal('input-aadhaar'),
+      ifsc_code: getVal('input-ifsc'),
+      bank_name: getVal('input-bank-name'),
+      account_number: getVal('input-account-number')
+    };
+
+    fetch('<?php echo PATH_PREFIX; ?>pages/save_session_state.php', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(currentData)
+    }).catch(err => console.error('saveSessionState error:', err));
+  }
+
   function goToStep(stepNum) {
+    saveSessionState();
     document.querySelectorAll('.step-container').forEach(el => el.classList.add('hidden'));
     const target = document.getElementById('step-' + stepNum);
     if (target) {
@@ -1496,6 +1540,12 @@ include __DIR__ . '/../includes/header.php';
             document.getElementById('pan-card-aadhaar').innerText = res.data.masked_aadhaar || 'N/A';
             document.getElementById('pan-card-number').innerText = res.data.pan || pan;
             panMaskedAadhaar = (res.data.masked_aadhaar || '').replace(/\s+/g, '');
+            
+            const nameEl = document.getElementById('input-name');
+            if (nameEl && res.data.full_name && (!nameEl.value || nameEl.value.length < 2)) {
+              nameEl.value = res.data.full_name;
+            }
+            if (typeof saveSessionState === 'function') saveSessionState();
             
             document.getElementById('pan-status-badge').classList.remove('hidden');
             document.getElementById('err-pan').classList.add('hidden');
@@ -1920,6 +1970,7 @@ include __DIR__ . '/../includes/header.php';
           .then(res => {
             if (res && res.BANK) {
               document.getElementById('input-bank-name').value = res.BANK + ' (' + (res.BRANCH || '') + ')';
+              if (typeof saveSessionState === 'function') saveSessionState();
               
               // Populate details card fields
               document.getElementById('ifsc-bank-name').innerText = res.BANK;
@@ -2093,6 +2144,13 @@ include __DIR__ . '/../includes/header.php';
   }
 
   document.addEventListener('DOMContentLoaded', () => {
+    const applyForm = document.getElementById('apply-form');
+    if (applyForm) {
+      applyForm.addEventListener('submit', () => {
+        saveSessionState();
+      });
+    }
+
     if (isFormSubmitted) {
       if (window.confetti) {
         confetti({

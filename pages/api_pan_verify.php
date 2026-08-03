@@ -98,6 +98,17 @@ if ($data && !empty($data['data']['result'])) {
     $_SESSION['pan_verified'] = true;
     $_SESSION['pan_name'] = $fullName;
     $_SESSION['pan_masked_aadhaar'] = $res['masked_aadhaar'] ?? '';
+    
+    if (!isset($_SESSION['lead_values']) || !is_array($_SESSION['lead_values'])) {
+        $_SESSION['lead_values'] = [];
+    }
+    $_SESSION['lead_values']['pan_number'] = $pan;
+    if (!empty($fullName)) {
+        $_SESSION['lead_values']['name'] = $fullName;
+    }
+    if (!empty($res['masked_aadhaar']) && empty($_SESSION['lead_values']['aadhaar_number'])) {
+        $_SESSION['lead_values']['aadhaar_number'] = $res['masked_aadhaar'];
+    }
 
     echo json_encode([
         'error' => false,
