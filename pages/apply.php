@@ -1532,6 +1532,18 @@ include __DIR__ . '/../includes/header.php';
   }
 
   function verifyPan(pan) {
+    if (!pan || typeof pan !== 'string') {
+      pan = document.getElementById('input-pan').value.trim().toUpperCase();
+    }
+    const errEl = document.getElementById('err-pan');
+    if (!/^[A-Z]{5}[0-9]{4}[A-Z]{1}$/.test(pan)) {
+      errEl.innerHTML = '<i data-lucide="alert-circle" class="w-3.5 h-3.5"></i> Enter a valid 10-character PAN number';
+      errEl.classList.remove('hidden');
+      if (window.lucide) lucide.createIcons();
+      return;
+    }
+    errEl.classList.add('hidden');
+
     showTransitionLoader('Connecting to NSDL PAN database...', 'Validating Taxpayer Identification');
     fetch('<?php echo PATH_PREFIX; ?>api_pan_verify.php?pan=' + encodeURIComponent(pan))
       .then(response => response.json())
