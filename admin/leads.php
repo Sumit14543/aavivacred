@@ -277,15 +277,15 @@ $leads = $service->getLeads($search, $category, $status, $assignedTo);
                 <div class="md:col-span-3 space-y-1">
                     <label class="block text-[10px] font-black uppercase tracking-wider text-slate-500 dark:text-slate-400">Partner Assignment</label>
                     <select name="assigned_to" class="w-full px-3 py-2 bg-slate-50 dark:bg-[#031d40] border border-slate-200 dark:border-white/10 rounded-xl text-xs font-bold text-slate-800 dark:text-white focus:outline-none focus:border-amber-400">
-                        <option value="">All Assignments (Show All)</option>
-                        <option value="unassigned" <?php echo $assignedTo === 'unassigned' ? 'selected' : ''; ?>>⚠️ Unassigned Only</option>
-                        <option value="Waqt Finance" <?php echo $assignedTo === 'Waqt Finance' ? 'selected' : ''; ?>>🚀 Waqt Finance</option>
-                        <option value="Geetpay" <?php echo $assignedTo === 'Geetpay' ? 'selected' : ''; ?>>💳 Geetpay</option>
-                        <option value="WaqtMoney" <?php echo $assignedTo === 'WaqtMoney' ? 'selected' : ''; ?>>💰 WaqtMoney</option>
-                        <option value="HDFC Bank DSA Desk" <?php echo $assignedTo === 'HDFC Bank DSA Desk' ? 'selected' : ''; ?>>🏦 HDFC Bank DSA</option>
-                        <option value="ICICI Bank Business Desk" <?php echo $assignedTo === 'ICICI Bank Business Desk' ? 'selected' : ''; ?>>🏦 ICICI Bank Desk</option>
-                        <option value="Bajaj Finance Team" <?php echo $assignedTo === 'Bajaj Finance Team' ? 'selected' : ''; ?>>🏦 Bajaj Finance</option>
-                        <option value="Axis Bank Processing Desk" <?php echo $assignedTo === 'Axis Bank Processing Desk' ? 'selected' : ''; ?>>🏦 Axis Bank Desk</option>
+                        <option value="" class="bg-slate-900 text-white">All Assignments (Show All)</option>
+                        <option value="unassigned" <?php echo $assignedTo === 'unassigned' ? 'selected' : ''; ?> class="bg-slate-900 text-amber-400">Unassigned Only</option>
+                        <option value="Waqt Finance" <?php echo $assignedTo === 'Waqt Finance' ? 'selected' : ''; ?> class="bg-slate-900 text-white">Waqt Finance</option>
+                        <option value="Geetpay" <?php echo $assignedTo === 'Geetpay' ? 'selected' : ''; ?> class="bg-slate-900 text-white">Geetpay</option>
+                        <option value="WaqtMoney" <?php echo $assignedTo === 'WaqtMoney' ? 'selected' : ''; ?> class="bg-slate-900 text-white">WaqtMoney</option>
+                        <option value="HDFC Bank DSA Desk" <?php echo $assignedTo === 'HDFC Bank DSA Desk' ? 'selected' : ''; ?> class="bg-slate-900 text-white">HDFC Bank DSA</option>
+                        <option value="ICICI Bank Business Desk" <?php echo $assignedTo === 'ICICI Bank Business Desk' ? 'selected' : ''; ?> class="bg-slate-900 text-white">ICICI Bank Desk</option>
+                        <option value="Bajaj Finance Team" <?php echo $assignedTo === 'Bajaj Finance Team' ? 'selected' : ''; ?> class="bg-slate-900 text-white">Bajaj Finance</option>
+                        <option value="Axis Bank Processing Desk" <?php echo $assignedTo === 'Axis Bank Processing Desk' ? 'selected' : ''; ?> class="bg-slate-900 text-white">Axis Bank Desk</option>
                     </select>
                 </div>
 
@@ -645,15 +645,15 @@ $leads = $service->getLeads($search, $category, $status, $assignedTo);
 
                 <!-- Select Partner / Executive -->
                 <div class="flex items-center gap-2 flex-1">
-                    <select name="assignee" id="assignee-select" class="px-3 py-2 bg-slate-800 dark:bg-white/10 border border-white/20 rounded-xl text-xs font-bold text-white focus:outline-none focus:border-amber-400">
-                        <option value="Waqt Finance">🚀 Send to Waqt Finance</option>
-                        <option value="Geetpay">💳 Send to Geetpay</option>
-                        <option value="WaqtMoney">💰 Send to WaqtMoney</option>
-                        <option value="HDFC Bank DSA Desk">🏦 Send to HDFC Bank DSA</option>
-                        <option value="ICICI Bank Business Desk">🏦 Send to ICICI Bank Desk</option>
-                        <option value="Bajaj Finance Team">🏦 Send to Bajaj Finance</option>
-                        <option value="Axis Bank Processing Desk">🏦 Send to Axis Bank Desk</option>
-                        <option value="custom">✏️ Custom Company / Partner...</option>
+                    <select name="assignee" id="assignee-select" class="px-4 py-2.5 bg-[#031d40] border border-white/20 rounded-xl text-xs font-bold text-white focus:outline-none focus:border-amber-400 cursor-pointer shadow-inner">
+                        <option value="Waqt Finance" class="bg-[#031d40] text-white py-1">Send to Waqt Finance</option>
+                        <option value="Geetpay" class="bg-[#031d40] text-white py-1">Send to Geetpay</option>
+                        <option value="WaqtMoney" class="bg-[#031d40] text-white py-1">Send to WaqtMoney</option>
+                        <option value="HDFC Bank DSA Desk" class="bg-[#031d40] text-white py-1">Send to HDFC Bank DSA</option>
+                        <option value="ICICI Bank Business Desk" class="bg-[#031d40] text-white py-1">Send to ICICI Bank Desk</option>
+                        <option value="Bajaj Finance Team" class="bg-[#031d40] text-white py-1">Send to Bajaj Finance</option>
+                        <option value="Axis Bank Processing Desk" class="bg-[#031d40] text-white py-1">Send to Axis Bank Desk</option>
+                        <option value="custom" class="bg-[#031d40] text-amber-400 font-bold py-1">Custom Company / Partner...</option>
                     </select>
 
                     <input type="text" name="custom_assignee" id="custom-assignee-input" placeholder="Enter custom name / DSA..." class="px-3 py-2 bg-slate-800 dark:bg-white/10 border border-white/20 rounded-xl text-xs font-semibold text-white placeholder-slate-400 hidden focus:outline-none">
