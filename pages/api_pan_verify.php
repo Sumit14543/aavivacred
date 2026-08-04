@@ -68,14 +68,22 @@ if ($token) {
 
 if ($apiSuccess && $resData) {
     $res = $resData['data']['result'];
-    $fullName = $res['full_name'] ?? '';
-    $fatherName = $res['father_name'] ?? $res['fatherName'] ?? 'NOT SPECIFIED';
-    $maskedAadhaar = $res['masked_aadhaar'] ?? '';
+    $fullName = $res['full_name'] ?? ($res['name']['full_name'] ?? '');
+    $fatherName = $res['father_name'] ?? $res['fatherName'] ?? ($res['name']['father_name'] ?? 'NOT SPECIFIED');
+    $dob = $res['dob'] ?? ($res['date_of_birth'] ?? '01/01/1990');
+    $gender = $res['gender'] ?? ($res['sex'] ?? 'MALE');
+    $typeOfHolder = $res['type_of_holder'] ?? 'Individual';
+    $aadhaarSeedingStatus = $res['aadhaar_seeding_status'] ?? true;
+    $maskedAadhaar = $res['masked_aadhaar'] ?? ($res['aadhaar_number'] ?? '');
 } else {
     // Simulated Fallback for smooth UX
     $sessionName = $_SESSION['lead_values']['name'] ?? $_SESSION['pan_name'] ?? '';
     $fullName = !empty($sessionName) ? strtoupper($sessionName) : 'APPLICANT VERIFIED';
     $fatherName = 'NOT SPECIFIED';
+    $dob = '01/01/1990';
+    $gender = 'MALE';
+    $typeOfHolder = 'Individual';
+    $aadhaarSeedingStatus = true;
     $maskedAadhaar = 'XXXX-XXXX-' . rand(1000, 9999);
 }
 
@@ -101,10 +109,10 @@ echo json_encode([
         'full_name' => $fullName,
         'pan' => $pan,
         'father_name' => $fatherName,
-        'dob' => '01/01/1990',
-        'gender' => 'MALE',
-        'type_of_holder' => 'Individual',
-        'aadhaar_seeding_status' => true,
+        'dob' => $dob,
+        'gender' => $gender,
+        'type_of_holder' => $typeOfHolder,
+        'aadhaar_seeding_status' => $aadhaarSeedingStatus,
         'masked_aadhaar' => $maskedAadhaar
     ]
 ]);

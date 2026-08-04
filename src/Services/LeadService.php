@@ -77,6 +77,7 @@ class LeadService {
         $gstTurnover     = Security::sanitize($postData['gst_turnover'] ?? '');
         $businessAddress = Security::sanitize($postData['business_address'] ?? '');
         $aadhaarNumber   = Security::sanitize($postData['aadhaar_number'] ?? '');
+        $aadhaarRefId    = Security::sanitize($postData['aadhaar_ref_id'] ?? ($_SESSION['lead_values']['aadhaar_ref_id'] ?? ($_SESSION['last_aadhaar_ref'] ?? '')));
         $ifscCode        = strtoupper(Security::sanitize($postData['ifsc_code'] ?? ''));
         $bankName        = Security::sanitize($postData['bank_name'] ?? '');
         $accountNumber   = Security::sanitize($postData['account_number'] ?? '');
@@ -163,6 +164,7 @@ class LeadService {
             'gst_turnover'    => $gstTurnover,
             'business_address'=> $businessAddress,
             'aadhaar_number'  => $aadhaarNumber,
+            'aadhaar_ref_id'  => $aadhaarRefId,
             'ifsc_code'       => $ifscCode,
             'bank_name'       => $bankName,
             'account_number'  => $accountNumber,

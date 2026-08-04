@@ -19,6 +19,7 @@ if (!isset($_SESSION['lead_values']) || !is_array($_SESSION['lead_values'])) {
     $_SESSION['lead_values'] = [];
 }
 $_SESSION['lead_values']['aadhaar_number'] = $aadhaar;
+$_SESSION['lead_values']['aadhaar_ref_id'] = $refId;
 
 $token = getenv('BIFROST_API_TOKEN');
 if (!$token && isset($_ENV['BIFROST_API_TOKEN'])) {

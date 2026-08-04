@@ -70,7 +70,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
         header('Content-Type: text/csv; charset=utf-8');
         header('Content-Disposition: attachment; filename=aavivacred_selected_leads_' . date('Y-m-d_H-i') . '.csv');
         $output = fopen('php://output', 'w');
-        fputcsv($output, ['Lead ID', 'Submitted At', 'Applicant Name', 'Mobile Number', 'Email Address', 'City', 'Loan Category', 'Loan Amount (INR)', 'Employment Type', 'Monthly Income (INR)', 'PAN Number', 'Aadhaar Number', 'Udyam Registration No.', 'GSTIN Number', 'Business / Firm Name', 'Owner Legal Name', 'Business Nature', 'Org Constitution Type', 'GST Turnover Slab', 'Business Address', 'Shop Photo URL', 'Bank Name', 'IFSC Code', 'Account Number', 'Assigned Partner', 'Status']);
+        fputcsv($output, ['Lead ID', 'Submitted At', 'Applicant Name', 'Mobile Number', 'Email Address', 'City', 'Loan Category', 'Loan Amount (INR)', 'Employment Type', 'Monthly Income (INR)', 'PAN Number', 'Aadhaar Number', 'DigiLocker Ref ID', 'Udyam Registration No.', 'GSTIN Number', 'Business / Firm Name', 'Owner Legal Name', 'Business Nature', 'Org Constitution Type', 'GST Turnover Slab', 'Business Address', 'Shop Photo URL', 'Bank Name', 'IFSC Code', 'Account Number', 'Assigned Partner', 'Status']);
         foreach ($filtered as $lead) {
             fputcsv($output, [
                 $lead['lead_id'] ?? ('AVV-' . $lead['id']),
@@ -85,6 +85,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
                 $lead['monthly_income'] ?? 0,
                 strtoupper($lead['pan_number'] ?? ''),
                 $lead['aadhaar_number'] ?? '',
+                $lead['aadhaar_ref_id'] ?? '',
                 $lead['udyam_number'] ?? '',
                 $lead['gst_number'] ?? '',
                 $lead['business_name'] ?? '',
@@ -123,7 +124,7 @@ if (isset($_GET['export']) && $_GET['export'] === 'csv') {
     header('Content-Type: text/csv; charset=utf-8');
     header('Content-Disposition: attachment; filename=aavivacred_all_leads_' . date('Y-m-d_H-i') . '.csv');
     $output = fopen('php://output', 'w');
-    fputcsv($output, ['Lead ID', 'Submitted At', 'Applicant Name', 'Mobile Number', 'Email Address', 'City', 'Loan Category', 'Loan Amount (INR)', 'Employment Type', 'Monthly Income (INR)', 'PAN Number', 'Aadhaar Number', 'Udyam Registration No.', 'GSTIN Number', 'Business / Firm Name', 'Owner Legal Name', 'Business Nature', 'Org Constitution Type', 'GST Turnover Slab', 'Business Address', 'Shop Photo URL', 'Bank Name', 'IFSC Code', 'Account Number', 'Assigned Partner', 'Status']);
+    fputcsv($output, ['Lead ID', 'Submitted At', 'Applicant Name', 'Mobile Number', 'Email Address', 'City', 'Loan Category', 'Loan Amount (INR)', 'Employment Type', 'Monthly Income (INR)', 'PAN Number', 'Aadhaar Number', 'DigiLocker Ref ID', 'Udyam Registration No.', 'GSTIN Number', 'Business / Firm Name', 'Owner Legal Name', 'Business Nature', 'Org Constitution Type', 'GST Turnover Slab', 'Business Address', 'Shop Photo URL', 'Bank Name', 'IFSC Code', 'Account Number', 'Assigned Partner', 'Status']);
     foreach ($leads as $lead) {
         fputcsv($output, [
             $lead['lead_id'] ?? ('AVV-' . $lead['id']),
@@ -138,6 +139,7 @@ if (isset($_GET['export']) && $_GET['export'] === 'csv') {
             $lead['monthly_income'] ?? 0,
             strtoupper($lead['pan_number'] ?? ''),
             $lead['aadhaar_number'] ?? '',
+            $lead['aadhaar_ref_id'] ?? '',
             $lead['udyam_number'] ?? '',
             $lead['gst_number'] ?? '',
             $lead['business_name'] ?? '',
@@ -348,6 +350,7 @@ $leads = $service->getLeads($search, $category, $status, $assignedTo);
                                 <th class="p-3">Monthly Income / Turnover</th>
                                 <th class="p-3">PAN Number</th>
                                 <th class="p-3">Aadhaar Number</th>
+                                <th class="p-3">DigiLocker Ref ID</th>
                                 <th class="p-3">Udyam Reg. Number</th>
                                 <th class="p-3">GSTIN Number</th>
                                 <th class="p-3">Business / Firm Name</th>
@@ -368,7 +371,7 @@ $leads = $service->getLeads($search, $category, $status, $assignedTo);
                         <tbody class="divide-y divide-slate-100 dark:divide-white/5">
                             <?php if (empty($leads)): ?>
                                 <tr>
-                                    <td colspan="28" class="p-6 text-center text-slate-400 font-medium">No lead applications matched your search criteria.</td>
+                                    <td colspan="29" class="p-6 text-center text-slate-400 font-medium">No lead applications matched your search criteria.</td>
                                 </tr>
                             <?php else: ?>
                                 <?php foreach ($leads as $lead): ?>
@@ -451,6 +454,17 @@ $leads = $service->getLeads($search, $category, $status, $assignedTo);
                                             <?php if (!empty($lead['aadhaar_number'])): ?>
                                                 <span class="px-2 py-1 rounded bg-sky-500/10 border border-sky-500/20">
                                                     <?php echo htmlspecialchars($lead['aadhaar_number']); ?>
+                                                </span>
+                                            <?php else: ?>
+                                                <span class="text-slate-400 font-normal">—</span>
+                                            <?php endif; ?>
+                                        </td>
+
+                                        <!-- DigiLocker Ref ID -->
+                                        <td class="p-3 font-mono font-bold text-sky-600 dark:text-sky-400 text-xs">
+                                            <?php if (!empty($lead['aadhaar_ref_id'])): ?>
+                                                <span class="px-2 py-0.5 rounded bg-sky-500/10 border border-sky-500/20 text-[10px]">
+                                                    🆔 <?php echo htmlspecialchars($lead['aadhaar_ref_id']); ?>
                                                 </span>
                                             <?php else: ?>
                                                 <span class="text-slate-400 font-normal">—</span>

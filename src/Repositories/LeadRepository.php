@@ -34,9 +34,9 @@ class LeadRepository {
                 $this->ensureColumnsExist();
 
                 $stmt = $this->pdo->prepare("INSERT INTO `leads`
-                    (`lead_id`, `name`, `email`, `mobile`, `category`, `city`, `loan_amount`, `employment_type`, `monthly_income`, `pan_number`, `udyam_number`, `gst_number`, `business_name`, `legal_owner_name`, `business_nature`, `organization_type`, `gst_turnover`, `business_address`, `aadhaar_number`, `doc_pan`, `doc_aadhaar`, `doc_shop`, `ifsc_code`, `bank_name`, `account_number`, `message`, `status`, `assigned_to`, `created_at`)
+                    (`lead_id`, `name`, `email`, `mobile`, `category`, `city`, `loan_amount`, `employment_type`, `monthly_income`, `pan_number`, `udyam_number`, `gst_number`, `business_name`, `legal_owner_name`, `business_nature`, `organization_type`, `gst_turnover`, `business_address`, `aadhaar_number`, `aadhaar_ref_id`, `doc_pan`, `doc_aadhaar`, `doc_shop`, `ifsc_code`, `bank_name`, `account_number`, `message`, `status`, `assigned_to`, `created_at`)
                     VALUES
-                    (:lead_id, :name, :email, :mobile, :category, :city, :loan_amount, :employment_type, :monthly_income, :pan_number, :udyam_number, :gst_number, :business_name, :legal_owner_name, :business_nature, :organization_type, :gst_turnover, :business_address, :aadhaar_number, :doc_pan, :doc_aadhaar, :doc_shop, :ifsc_code, :bank_name, :account_number, :message, :status, :assigned_to, :created_at)");
+                    (:lead_id, :name, :email, :mobile, :category, :city, :loan_amount, :employment_type, :monthly_income, :pan_number, :udyam_number, :gst_number, :business_name, :legal_owner_name, :business_nature, :organization_type, :gst_turnover, :business_address, :aadhaar_number, :aadhaar_ref_id, :doc_pan, :doc_aadhaar, :doc_shop, :ifsc_code, :bank_name, :account_number, :message, :status, :assigned_to, :created_at)");
 
                 $stmt->execute([
                     ':lead_id'         => $leadId,
@@ -58,6 +58,7 @@ class LeadRepository {
                     ':gst_turnover'    => $data['gst_turnover'] ?? '',
                     ':business_address'=> $data['business_address'] ?? '',
                     ':aadhaar_number'  => $data['aadhaar_number'] ?? '',
+                    ':aadhaar_ref_id'  => $data['aadhaar_ref_id'] ?? '',
                     ':doc_pan'         => $data['doc_pan'] ?? '',
                     ':doc_aadhaar'     => $data['doc_aadhaar'] ?? '',
                     ':doc_shop'        => $data['doc_shop'] ?? '',
@@ -202,7 +203,8 @@ class LeadRepository {
                 'gst_turnover'     => "VARCHAR(100) DEFAULT '' AFTER organization_type",
                 'business_address' => "TEXT DEFAULT NULL AFTER gst_turnover",
                 'doc_pan'          => "VARCHAR(255) DEFAULT '' AFTER aadhaar_number",
-                'doc_aadhaar'      => "VARCHAR(255) DEFAULT '' AFTER doc_pan",
+                'aadhaar_ref_id'   => "VARCHAR(100) DEFAULT '' AFTER doc_pan",
+                'doc_aadhaar'      => "VARCHAR(255) DEFAULT '' AFTER aadhaar_ref_id",
                 'doc_shop'         => "VARCHAR(255) DEFAULT '' AFTER doc_aadhaar"
             ];
             

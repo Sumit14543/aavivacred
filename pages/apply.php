@@ -451,6 +451,7 @@ include __DIR__ . '/../includes/header.php';
           <input type="hidden" id="input-organization-type" name="organization_type" value="<?php echo htmlspecialchars($values['organization_type'] ?? ''); ?>">
           <input type="hidden" id="input-gst-turnover" name="gst_turnover" value="<?php echo htmlspecialchars($values['gst_turnover'] ?? ''); ?>">
           <input type="hidden" id="input-business-address" name="business_address" value="<?php echo htmlspecialchars($values['business_address'] ?? ''); ?>">
+          <input type="hidden" id="input-aadhaar-ref-id" name="aadhaar_ref_id" value="<?php echo htmlspecialchars($values['aadhaar_ref_id'] ?? ($_SESSION['last_aadhaar_ref'] ?? '')); ?>">
 
           <!-- STEP 1: CONTACT VERIFICATION -->
           <div id="step-1" class="step-container space-y-6 text-left">
@@ -1403,6 +1404,7 @@ include __DIR__ . '/../includes/header.php';
       gst_turnover: getVal('input-gst-turnover'),
       business_address: getVal('input-business-address'),
       aadhaar_number: getVal('input-aadhaar'),
+      aadhaar_ref_id: getVal('input-aadhaar-ref-id'),
       ifsc_code: getVal('input-ifsc'),
       bank_name: getVal('input-bank-name'),
       account_number: getVal('input-account-number')

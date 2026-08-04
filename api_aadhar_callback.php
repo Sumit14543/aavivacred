@@ -145,6 +145,12 @@ if ($mock) {
         $_SESSION['aadhaar_verified'] = true;
         $_SESSION['aadhaar_name'] = $name;
         $_SESSION['aadhaar_number_masked'] = 'XXXX XXXX ' . substr($aadhaarNum, -4);
+        if (!isset($_SESSION['lead_values']) || !is_array($_SESSION['lead_values'])) {
+            $_SESSION['lead_values'] = [];
+        }
+        if (!empty($state)) {
+            $_SESSION['lead_values']['aadhaar_ref_id'] = $state;
+        }
         $name = $_SESSION['aadhaar_name'];
         $maskedAadhaar = $_SESSION['aadhaar_number_masked'];
     } else {

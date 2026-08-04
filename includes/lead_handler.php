@@ -42,6 +42,7 @@ class LeadHandler {
         'gst_turnover'    => '',
         'business_address'=> '',
         'aadhaar_number'  => '',
+        'aadhaar_ref_id'  => '',
         'ifsc_code'       => '',
         'bank_name'       => '',
         'account_number'  => '',
