@@ -1084,10 +1084,6 @@ include __DIR__ . '/../includes/header.php';
     const bizModal = document.getElementById('biz-modal');
     if (!bizModal) return;
 
-  function openBizModal(type) {
-    const bizModal = document.getElementById('biz-modal');
-    if (!bizModal) return;
-
     if (type === 'udyam' && udyamData) {
       document.getElementById('biz-card-header-main').innerText = 'भारत सरकार / GOVERNMENT OF INDIA';
       document.getElementById('biz-card-header-sub').innerText = 'सूक्ष्म, लघु एवं मध्यम उद्यम मंत्रालय / MINISTRY OF MSME';
