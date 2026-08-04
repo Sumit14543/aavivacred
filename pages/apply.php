@@ -753,7 +753,6 @@ include __DIR__ . '/../includes/header.php';
             </div>
 
             <div class="space-y-5">
-            <div class="space-y-5">
               <!-- Udyam Registration (Required/Optional for Business) -->
               <div class="space-y-1.5">
                 <label class="block text-xs font-extrabold text-darkBlue uppercase tracking-wider">Udyam Registration Number</label>
@@ -2321,7 +2320,9 @@ include __DIR__ . '/../includes/header.php';
     }
 
     if (stepParam >= 1 && stepParam <= 8) {
-      if (stepParam === 6 && isBusinessSkipped) {
+      if (stepParam > 4 && !isPanVerified) {
+        goToStep(1);
+      } else if (stepParam === 6 && isBusinessSkipped) {
         goToStep(7);
       } else {
         goToStep(stepParam);
