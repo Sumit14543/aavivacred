@@ -279,12 +279,13 @@ $leads = $service->getLeads($search, $category, $status, $assignedTo);
                     <select name="assigned_to" class="w-full px-3 py-2 bg-slate-50 dark:bg-[#031d40] border border-slate-200 dark:border-white/10 rounded-xl text-xs font-bold text-slate-800 dark:text-white focus:outline-none focus:border-amber-400">
                         <option value="">All Assignments (Show All)</option>
                         <option value="unassigned" <?php echo $assignedTo === 'unassigned' ? 'selected' : ''; ?>>⚠️ Unassigned Only</option>
+                        <option value="Waqt Finance" <?php echo $assignedTo === 'Waqt Finance' ? 'selected' : ''; ?>>🚀 Waqt Finance</option>
+                        <option value="Geetpay" <?php echo $assignedTo === 'Geetpay' ? 'selected' : ''; ?>>💳 Geetpay</option>
+                        <option value="WaqtMoney" <?php echo $assignedTo === 'WaqtMoney' ? 'selected' : ''; ?>>💰 WaqtMoney</option>
                         <option value="HDFC Bank DSA Desk" <?php echo $assignedTo === 'HDFC Bank DSA Desk' ? 'selected' : ''; ?>>🏦 HDFC Bank DSA</option>
                         <option value="ICICI Bank Business Desk" <?php echo $assignedTo === 'ICICI Bank Business Desk' ? 'selected' : ''; ?>>🏦 ICICI Bank Desk</option>
                         <option value="Bajaj Finance Team" <?php echo $assignedTo === 'Bajaj Finance Team' ? 'selected' : ''; ?>>🏦 Bajaj Finance</option>
                         <option value="Axis Bank Processing Desk" <?php echo $assignedTo === 'Axis Bank Processing Desk' ? 'selected' : ''; ?>>🏦 Axis Bank Desk</option>
-                        <option value="Field Executive 1 (North)" <?php echo $assignedTo === 'Field Executive 1 (North)' ? 'selected' : ''; ?>>👤 Executive 1 (North)</option>
-                        <option value="Field Executive 2 (South)" <?php echo $assignedTo === 'Field Executive 2 (South)' ? 'selected' : ''; ?>>👤 Executive 2 (South)</option>
                     </select>
                 </div>
 
@@ -576,8 +577,23 @@ $leads = $service->getLeads($search, $category, $status, $assignedTo);
                                         <!-- Assigned To -->
                                         <td class="p-3">
                                             <?php if (!empty($lead['assigned_to'])): ?>
-                                                <span class="px-2.5 py-1 rounded-lg bg-purple-500/10 text-purple-600 dark:text-purple-300 border border-purple-500/20 text-[10px] font-bold flex items-center gap-1 w-max">
-                                                    <i data-lucide="user-check" class="w-3 h-3 text-purple-500"></i> <?php echo htmlspecialchars($lead['assigned_to']); ?>
+                                                <?php
+                                                $ass = $lead['assigned_to'];
+                                                $badgeClass = "bg-purple-500/10 text-purple-600 dark:text-purple-300 border-purple-500/20";
+                                                $icon = "🏢";
+                                                if ($ass === 'Waqt Finance') {
+                                                    $badgeClass = "bg-indigo-500/15 text-indigo-600 dark:text-indigo-300 border-indigo-500/30";
+                                                    $icon = "🚀";
+                                                } elseif ($ass === 'Geetpay') {
+                                                    $badgeClass = "bg-emerald-500/15 text-emerald-600 dark:text-emerald-300 border-emerald-500/30";
+                                                    $icon = "💳";
+                                                } elseif ($ass === 'WaqtMoney') {
+                                                    $badgeClass = "bg-amber-500/15 text-amber-600 dark:text-amber-300 border-amber-500/30";
+                                                    $icon = "💰";
+                                                }
+                                                ?>
+                                                <span class="px-2.5 py-1 rounded-lg border text-[10px] font-black flex items-center gap-1.5 w-max <?php echo $badgeClass; ?>">
+                                                    <span><?php echo $icon; ?></span> <?php echo htmlspecialchars($ass); ?>
                                                 </span>
                                             <?php else: ?>
                                                 <span class="text-[10px] text-amber-600 dark:text-amber-400 font-semibold bg-amber-500/10 px-2 py-0.5 rounded-md border border-amber-500/20">Unassigned</span>
@@ -630,13 +646,14 @@ $leads = $service->getLeads($search, $category, $status, $assignedTo);
                 <!-- Select Partner / Executive -->
                 <div class="flex items-center gap-2 flex-1">
                     <select name="assignee" id="assignee-select" class="px-3 py-2 bg-slate-800 dark:bg-white/10 border border-white/20 rounded-xl text-xs font-bold text-white focus:outline-none focus:border-amber-400">
-                        <option value="HDFC Bank DSA Desk">🏦 HDFC Bank DSA Desk</option>
-                        <option value="ICICI Bank Business Desk">🏦 ICICI Bank Business Desk</option>
-                        <option value="Bajaj Finance Team">🏦 Bajaj Finance Team</option>
-                        <option value="Axis Bank Processing Desk">🏦 Axis Bank Processing Desk</option>
-                        <option value="Field Executive 1 (North)">👤 Field Executive 1 (North)</option>
-                        <option value="Field Executive 2 (South)">👤 Field Executive 2 (South)</option>
-                        <option value="custom">✏️ Custom Partner / Executive...</option>
+                        <option value="Waqt Finance">🚀 Send to Waqt Finance</option>
+                        <option value="Geetpay">💳 Send to Geetpay</option>
+                        <option value="WaqtMoney">💰 Send to WaqtMoney</option>
+                        <option value="HDFC Bank DSA Desk">🏦 Send to HDFC Bank DSA</option>
+                        <option value="ICICI Bank Business Desk">🏦 Send to ICICI Bank Desk</option>
+                        <option value="Bajaj Finance Team">🏦 Send to Bajaj Finance</option>
+                        <option value="Axis Bank Processing Desk">🏦 Send to Axis Bank Desk</option>
+                        <option value="custom">✏️ Custom Company / Partner...</option>
                     </select>
 
                     <input type="text" name="custom_assignee" id="custom-assignee-input" placeholder="Enter custom name / DSA..." class="px-3 py-2 bg-slate-800 dark:bg-white/10 border border-white/20 rounded-xl text-xs font-semibold text-white placeholder-slate-400 hidden focus:outline-none">
