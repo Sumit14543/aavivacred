@@ -753,15 +753,17 @@ include __DIR__ . '/../includes/header.php';
             </div>
 
             <div class="space-y-5">
-              <!-- Udyam Registration (Required) -->
+            <div class="space-y-5">
+              <!-- Udyam Registration (Required/Optional for Business) -->
               <div class="space-y-1.5">
-                <label class="block text-xs font-extrabold text-darkBlue uppercase tracking-wider">Udyam Registration Number * (Required)</label>
+                <label class="block text-xs font-extrabold text-darkBlue uppercase tracking-wider">Udyam Registration Number</label>
                 <div class="relative flex items-center">
                   <input type="text" id="input-udyam" name="udyam_number" maxlength="19"
                     value="<?php echo htmlspecialchars(($values['udyam_number'] ?? '') ?: 'UDYAM-'); ?>" 
                     oninput="handleUdyamInput(this)"
-                    class="premium-input px-4 py-3.5 text-base font-semibold text-darkBlue uppercase tracking-widest" 
+                    class="premium-input pl-4 pr-24 py-3.5 text-base font-semibold text-darkBlue uppercase tracking-widest" 
                     placeholder="UDYAM-XX-00-0000000" />
+                  <button type="button" id="btn-verify-udyam" onclick="verifyUdyamOnly()" class="absolute right-2 px-4 py-2 bg-[#021435] hover:bg-[#0b2447] text-white text-xs font-black rounded-xl transition">Verify</button>
                 </div>
                 <p class="text-[10px] text-slate-400 font-bold mt-1">Format Guide: UDYAM-XX-00-0000000 (e.g., UDYAM-UP-29-0196409)</p>
                 <p id="err-udyam" class="text-[11px] text-buddyRed font-bold hidden flex items-center gap-1"><i data-lucide="alert-circle" class="w-3.5 h-3.5"></i> Enter a valid Udyam Registration number</p>
@@ -776,15 +778,16 @@ include __DIR__ . '/../includes/header.php';
                 <button type="button" onclick="openBizModal('udyam')" class="text-primary font-black underline text-xs">View Info</button>
               </div>
 
-              <!-- GSTIN Number (Optional) -->
+              <!-- GSTIN Number Verification -->
               <div class="space-y-1.5">
-                <label class="block text-xs font-extrabold text-slate-500 uppercase tracking-wider">GSTIN Number (Optional)</label>
+                <label class="block text-xs font-extrabold text-darkBlue uppercase tracking-wider">GSTIN Number (GST Verification)</label>
                 <div class="relative flex items-center">
                   <input type="text" id="input-gst" name="gst_number" maxlength="15"
                     value="<?php echo htmlspecialchars($values['gst_number'] ?? ''); ?>" 
                     oninput="handleGstInput(this)"
-                    class="premium-input px-4 py-3.5 text-base font-semibold text-darkBlue uppercase tracking-widest" 
-                    placeholder="e.g. 07AAAAA1111A1Z1" />
+                    class="premium-input pl-4 pr-24 py-3.5 text-base font-semibold text-darkBlue uppercase tracking-widest" 
+                    placeholder="07AAAAA1111A1Z1" />
+                  <button type="button" id="btn-verify-gst" onclick="verifyGstOnly()" class="absolute right-2 px-4 py-2 bg-[#021435] hover:bg-[#0b2447] text-white text-xs font-black rounded-xl transition">Verify</button>
                 </div>
                 <p id="err-gst" class="text-[11px] text-buddyRed font-bold hidden flex items-center gap-1"><i data-lucide="alert-circle" class="w-3.5 h-3.5"></i> Enter a valid 15-character GSTIN</p>
               </div>
@@ -804,7 +807,7 @@ include __DIR__ . '/../includes/header.php';
                 <i data-lucide="arrow-left" class="w-3.5 h-3.5"></i> Back
               </button>
 
-              <button type="button" onclick="validateStep5()" class="w-full sm:w-auto justify-center bg-gradient-to-r from-primary to-[#053d60] hover:from-darkBlue hover:to-primary text-white py-3.5 px-6 rounded-2xl font-extrabold text-xs flex items-center gap-2 shadow-md hover:shadow-lg hover:scale-105 transition-all active:scale-95">
+              <button type="button" onclick="validateStep6()" class="w-full sm:w-auto justify-center bg-gradient-to-r from-primary to-[#053d60] hover:from-darkBlue hover:to-primary text-white py-3.5 px-6 rounded-2xl font-extrabold text-xs flex items-center gap-2 shadow-md hover:shadow-lg hover:scale-105 transition-all active:scale-95">
                 <span>Continue</span> <i data-lucide="arrow-right" class="w-4 h-4 text-accentYellow"></i>
               </button>
             </div>
@@ -1929,36 +1932,31 @@ include __DIR__ . '/../includes/header.php';
 
   function validateStep6() {
     const udyamVal = document.getElementById('input-udyam').value.trim().toUpperCase();
-    if (!isUdyamVerified) {
-      if (/^UDYAM-[A-Z]{2}-\d{2}-\d{7}$/i.test(udyamVal)) {
-        verifyUdyamOnly();
-        return;
-      }
-      const errMsg = document.getElementById('err-udyam');
-      errMsg.innerHTML = `<i data-lucide="alert-circle" class="w-3.5 h-3.5"></i> Valid Udyam Registration number required (Format: UDYAM-XX-00-0000000)`;
-      errMsg.classList.remove('hidden');
-      if (window.lucide) lucide.createIcons();
+    const gstVal = document.getElementById('input-gst').value.trim().toUpperCase();
+
+    if (isUdyamVerified || isGstVerified) {
+      document.getElementById('err-udyam').classList.add('hidden');
+      document.getElementById('err-gst').classList.add('hidden');
+      runLocalTransition('Validating Business Profile...', 'Syncing Verification Ledgers', () => {
+        goToStep(7);
+      });
       return;
     }
-    document.getElementById('err-udyam').classList.add('hidden');
 
-    const gstVal = document.getElementById('input-gst').value.trim();
-    if (gstVal.length > 0 && !isGstVerified) {
-      if (gstVal.length === 15) {
-        verifyGstOnly();
-        return;
-      }
-      const errMsg = document.getElementById('err-gst');
-      errMsg.innerHTML = `<i data-lucide="alert-circle" class="w-3.5 h-3.5"></i> Please enter a valid 15-character GSTIN or clear field to proceed.`;
-      errMsg.classList.remove('hidden');
-      if (window.lucide) lucide.createIcons();
+    if (/^UDYAM-[A-Z]{2}-\d{2}-\d{7}$/i.test(udyamVal)) {
+      verifyUdyamOnly();
       return;
     }
-    document.getElementById('err-gst').classList.add('hidden');
 
-    runLocalTransition('Validating Business Profile...', 'Syncing Verification Ledgers', () => {
-      goToStep(7);
-    });
+    if (gstVal.length === 15) {
+      verifyGstOnly();
+      return;
+    }
+
+    const errMsg = document.getElementById('err-udyam');
+    errMsg.innerHTML = `<i data-lucide="alert-circle" class="w-3.5 h-3.5"></i> Business Verification Required: Please enter and verify your Udyam Registration Number or 15-digit GSTIN Number.`;
+    errMsg.classList.remove('hidden');
+    if (window.lucide) lucide.createIcons();
   }
 
   function goBackFromStep7() {
@@ -2194,8 +2192,15 @@ include __DIR__ . '/../includes/header.php';
   document.addEventListener('DOMContentLoaded', () => {
     const applyForm = document.getElementById('apply-form');
     if (applyForm) {
-      applyForm.addEventListener('submit', () => {
+      applyForm.addEventListener('submit', (e) => {
         saveSessionState();
+        const category = document.getElementById('input-category').value;
+        const fileShop = document.getElementById('file-shop');
+        if ((category === 'business' || category === 'edi') && fileShop && fileShop.files.length === 0) {
+          e.preventDefault();
+          alert('Upload Required: Please upload your Shop / Business Location Photo to complete your Business Loan application.');
+          return false;
+        }
       });
     }
 
