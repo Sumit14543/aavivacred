@@ -322,8 +322,8 @@ include __DIR__ . '/../includes/header.php';
       </div>
 
       <!-- Action Button -->
-      <button type="button" onclick="confirmBizAndContinue()" class="w-full bg-gradient-to-r from-primary to-[#053d60] hover:from-darkBlue hover:to-primary text-white py-2.5 sm:py-3 px-4 rounded-xl font-extrabold text-xs flex items-center justify-center gap-2 shadow-md hover:scale-[1.02] transition-all active:scale-95 mt-2">
-        <span>Confirm Details & Continue</span> <i data-lucide="arrow-right" class="w-3.5 h-3.5 text-accentYellow"></i>
+      <button type="button" onclick="closeBizModal()" class="w-full bg-gradient-to-r from-primary to-[#053d60] hover:from-darkBlue hover:to-primary text-white py-2.5 sm:py-3 px-4 rounded-xl font-extrabold text-xs flex items-center justify-center gap-2 shadow-md hover:scale-[1.02] transition-all active:scale-95 mt-2">
+        <span>Confirm Details & Close</span> <i data-lucide="check-circle" class="w-3.5 h-3.5 text-accentYellow"></i>
       </button>
 
     </div>
@@ -1204,14 +1204,7 @@ include __DIR__ . '/../includes/header.php';
   }
 
   function confirmBizAndContinue() {
-    const bizModal = document.getElementById('biz-modal');
-    if (bizModal) {
-      bizModal.classList.add('opacity-0');
-      setTimeout(() => {
-        bizModal.classList.add('hidden');
-        validateStep6();
-      }, 300);
-    }
+    closeBizModal();
   }
 
   function sendEmailOTP() {
