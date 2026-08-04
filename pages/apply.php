@@ -879,34 +879,22 @@ include __DIR__ . '/../includes/header.php';
           <!-- STEP 7: UPLOAD DOCUMENTS & SUBMIT -->
           <div id="step-8" class="step-container space-y-6 text-left hidden">
             <div class="space-y-1">
-              <h3 class="font-display font-black text-xl text-darkBlue">Upload Documents & Submit</h3>
-              <p class="text-xs text-slate-500 font-semibold">Upload clear copies of your KYC documents for instant approval.</p>
+              <h3 class="font-display font-black text-xl text-darkBlue">Upload Shop / Business Photo & Submit</h3>
+              <p class="text-xs text-slate-500 font-semibold">Upload clear photo of your shop or business location for instant approval.</p>
             </div>
 
             <div class="space-y-4">
-              <div class="p-4 border border-dashed border-slate-300/80 hover:border-primary hover:bg-primary/5 rounded-2xl text-center space-y-2 bg-slate-50 transition cursor-pointer" onclick="document.getElementById('file-pan').click()">
-                <i data-lucide="upload-cloud" class="w-8 h-8 text-primary mx-auto"></i>
-                <p class="text-xs font-semibold text-darkBlue">Upload PAN Card Image / PDF</p>
-                <input type="file" id="file-pan" name="doc_pan" accept="image/*,.pdf" class="hidden" onchange="updateFileLabel(this, 'lbl-pan')" />
-                <span id="lbl-pan" class="text-[10px] font-semibold text-slate-400 block">No file selected</span>
-              </div>
-
-              <div class="p-4 border border-dashed border-slate-300/80 hover:border-primary hover:bg-primary/5 rounded-2xl text-center space-y-2 bg-slate-50 transition cursor-pointer" onclick="document.getElementById('file-aadhaar').click()">
-                <i data-lucide="upload-cloud" class="w-8 h-8 text-primary mx-auto"></i>
-                <p class="text-xs font-semibold text-darkBlue">Upload Aadhaar Front & Back</p>
-                <input type="file" id="file-aadhaar" name="doc_aadhaar" accept="image/*,.pdf" class="hidden" onchange="updateFileLabel(this, 'lbl-aadhaar')" />
-                <span id="lbl-aadhaar" class="text-[10px] font-semibold text-slate-400 block">No file selected</span>
-              </div>
-
-              <!-- Shop / Business Photo Upload (For Business & EDI Loans) -->
-              <div id="shop-photo-upload-container" class="p-4 border border-dashed border-purple-300 hover:border-purple-600 hover:bg-purple-50/50 rounded-2xl text-center space-y-2 bg-purple-50/20 transition cursor-pointer" onclick="document.getElementById('file-shop').click()">
-                <div class="flex items-center justify-center gap-1.5 text-purple-700">
-                  <i data-lucide="store" class="w-6 h-6 text-purple-600"></i>
-                  <span class="text-[10px] font-black uppercase tracking-wider bg-purple-100 text-purple-800 px-2 py-0.5 rounded-md">Business & EDI Loan</span>
+              <!-- Shop / Business Location Photo Upload -->
+              <div id="shop-photo-upload-container" class="p-6 border-2 border-dashed border-primary/40 hover:border-primary hover:bg-primary/5 rounded-3xl text-center space-y-3 bg-slate-50/80 transition cursor-pointer shadow-sm" onclick="document.getElementById('file-shop').click()">
+                <div class="w-14 h-14 bg-primary/10 rounded-2xl flex items-center justify-center mx-auto text-primary">
+                  <i data-lucide="store" class="w-7 h-7"></i>
                 </div>
-                <p class="text-xs font-extrabold text-darkBlue">Upload Shop / Business Location Photo (JPG / PNG / PDF)</p>
+                <div>
+                  <p class="text-sm font-black text-darkBlue">Upload Shop / Business Location Photo</p>
+                  <p class="text-[11px] text-slate-400 font-semibold mt-0.5">Click to browse or drop file (JPG, PNG, PDF)</p>
+                </div>
                 <input type="file" id="file-shop" name="doc_shop" accept="image/*,.pdf" class="hidden" onchange="updateFileLabel(this, 'lbl-shop')" />
-                <span id="lbl-shop" class="text-[10px] font-semibold text-slate-400 block">No file selected</span>
+                <span id="lbl-shop" class="inline-block px-3 py-1 rounded-full bg-slate-200/80 text-[10px] font-bold text-slate-600">No file selected</span>
               </div>
             </div>
 
@@ -1445,14 +1433,10 @@ include __DIR__ . '/../includes/header.php';
     const employment = document.getElementById('input-employment').value;
     const isBusinessSkipped = (category !== 'business' && category !== 'edi' && employment === 'Salaried');
 
-    // Toggle shop photo upload container visibility for Business & EDI loans
+    // Ensure shop photo upload container is visible
     const shopBox = document.getElementById('shop-photo-upload-container');
     if (shopBox) {
-      if (category === 'business' || category === 'edi') {
-        shopBox.classList.remove('hidden');
-      } else {
-        shopBox.classList.add('hidden');
-      }
+      shopBox.classList.remove('hidden');
     }
 
     // Update timeline progress fill line width
