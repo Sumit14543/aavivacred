@@ -1797,10 +1797,42 @@ include __DIR__ . '/../includes/header.php';
       });
   }
 
+  function validateAadhaarAgainstPanMask(value, panMask) {
+    if (!panMask) return { valid: true };
+    const cleanMask = panMask.replace(/\s+/g, '').replace(/[^0-9xX]/g, '');
+    
+    const matchPrefix = cleanMask.match(/^(\d+)/);
+    const matchSuffix = cleanMask.match(/(\d+)$/);
+    
+    const firstDigits = matchPrefix ? matchPrefix[1] : '';
+    const lastDigits = matchSuffix ? matchSuffix[1] : '';
+    
+    if (firstDigits && firstDigits.length >= 1) {
+      const enteredFirst = value.substring(0, firstDigits.length);
+      if (enteredFirst !== firstDigits) {
+        return { 
+          valid: false, 
+          message: `Aadhaar Mismatch: First ${firstDigits.length} digits must be "${firstDigits}" to match your PAN record (${firstDigits}xx...${lastDigits}).` 
+        };
+      }
+    }
+    
+    if (lastDigits && lastDigits.length >= 1) {
+      const enteredLast = value.substring(12 - lastDigits.length);
+      if (enteredLast !== lastDigits) {
+        return { 
+          valid: false, 
+          message: `Aadhaar Mismatch: Last ${lastDigits.length} digits must be "${lastDigits}" to match your PAN record (${firstDigits}...xx${lastDigits}).` 
+        };
+      }
+    }
+    
+    return { valid: true };
+  }
+
   function handleAadhaarInput(el) {
     let val = el.value.replace(/\s+/g, '').replace(/[^0-9]/g, '');
     
-    // Limit to 12 digits max
     if (val.length > 12) {
       val = val.substring(0, 12);
     }
@@ -1810,6 +1842,7 @@ include __DIR__ . '/../includes/header.php';
     const rawVal = el.value.replace(/\s+/g, '');
     const btnSubmit = document.getElementById('btn-submit-aadhaar');
     const btnContinue = document.getElementById('btn-continue-aadhaar');
+    const errAadhaar = document.getElementById('err-aadhaar');
     
     if (isAadhaarVerified) {
       if (btnSubmit) btnSubmit.classList.add('hidden');
@@ -1818,9 +1851,19 @@ include __DIR__ . '/../includes/header.php';
     }
 
     if (rawVal.length === 12) {
-      if (btnSubmit) btnSubmit.classList.remove('hidden');
+      const matchRes = validateAadhaarAgainstPanMask(rawVal, panMaskedAadhaar);
+      if (!matchRes.valid) {
+        if (btnSubmit) btnSubmit.classList.add('hidden');
+        errAadhaar.innerHTML = `<i data-lucide="alert-circle" class="w-3.5 h-3.5"></i> ${matchRes.message}`;
+        errAadhaar.classList.remove('hidden');
+        if (window.lucide) lucide.createIcons();
+      } else {
+        errAadhaar.classList.add('hidden');
+        if (btnSubmit) btnSubmit.classList.remove('hidden');
+      }
     } else {
       if (btnSubmit) btnSubmit.classList.add('hidden');
+      errAadhaar.classList.add('hidden');
     }
   }
 
@@ -1835,27 +1878,12 @@ include __DIR__ . '/../includes/header.php';
       return;
     }
 
-    if (panMaskedAadhaar) {
-      const cleanMask = panMaskedAadhaar.replace(/\s+/g, '');
-      const matchPrefix = cleanMask.match(/^(\d+)/);
-      const matchSuffix = cleanMask.match(/(\d+)$/);
-      
-      const firstDigits = matchPrefix ? matchPrefix[1] : '';
-      const lastDigits = matchSuffix ? matchSuffix[1] : '';
-      
-      if (firstDigits && value.substring(0, firstDigits.length) !== firstDigits) {
-        errAadhaar.innerHTML = `<i data-lucide="alert-circle" class="w-3.5 h-3.5"></i> Aadhaar first digits must match PAN registered pattern (${firstDigits}xx...)`;
-        errAadhaar.classList.remove('hidden');
-        if (window.lucide) lucide.createIcons();
-        return;
-      }
-      
-      if (lastDigits && value.substring(12 - lastDigits.length) !== lastDigits) {
-        errAadhaar.innerHTML = `<i data-lucide="alert-circle" class="w-3.5 h-3.5"></i> Aadhaar last digits must match PAN registered pattern (...xx${lastDigits})`;
-        errAadhaar.classList.remove('hidden');
-        if (window.lucide) lucide.createIcons();
-        return;
-      }
+    const matchRes = validateAadhaarAgainstPanMask(value, panMaskedAadhaar);
+    if (!matchRes.valid) {
+      errAadhaar.innerHTML = `<i data-lucide="alert-circle" class="w-3.5 h-3.5"></i> ${matchRes.message}`;
+      errAadhaar.classList.remove('hidden');
+      if (window.lucide) lucide.createIcons();
+      return;
     }
 
     errAadhaar.classList.add('hidden');
