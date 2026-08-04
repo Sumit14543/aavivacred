@@ -894,6 +894,17 @@ include __DIR__ . '/../includes/header.php';
                 <input type="file" id="file-aadhaar" name="doc_aadhaar" accept="image/*,.pdf" class="hidden" onchange="updateFileLabel(this, 'lbl-aadhaar')" />
                 <span id="lbl-aadhaar" class="text-[10px] font-semibold text-slate-400 block">No file selected</span>
               </div>
+
+              <!-- Shop / Business Photo Upload (For Business & EDI Loans) -->
+              <div id="shop-photo-upload-container" class="p-4 border border-dashed border-purple-300 hover:border-purple-600 hover:bg-purple-50/50 rounded-2xl text-center space-y-2 bg-purple-50/20 transition cursor-pointer" onclick="document.getElementById('file-shop').click()">
+                <div class="flex items-center justify-center gap-1.5 text-purple-700">
+                  <i data-lucide="store" class="w-6 h-6 text-purple-600"></i>
+                  <span class="text-[10px] font-black uppercase tracking-wider bg-purple-100 text-purple-800 px-2 py-0.5 rounded-md">Business & EDI Loan</span>
+                </div>
+                <p class="text-xs font-extrabold text-darkBlue">Upload Shop / Business Location Photo (JPG / PNG / PDF)</p>
+                <input type="file" id="file-shop" name="doc_shop" accept="image/*,.pdf" class="hidden" onchange="updateFileLabel(this, 'lbl-shop')" />
+                <span id="lbl-shop" class="text-[10px] font-semibold text-slate-400 block">No file selected</span>
+              </div>
             </div>
 
             <div class="flex flex-col-reverse sm:flex-row sm:justify-between items-center gap-3 sm:gap-0 pt-4 border-t border-slate-100">
@@ -1429,6 +1440,16 @@ include __DIR__ . '/../includes/header.php';
     const category = document.getElementById('input-category').value;
     const employment = document.getElementById('input-employment').value;
     const isBusinessSkipped = (category !== 'business' && category !== 'edi' && employment === 'Salaried');
+
+    // Toggle shop photo upload container visibility for Business & EDI loans
+    const shopBox = document.getElementById('shop-photo-upload-container');
+    if (shopBox) {
+      if (category === 'business' || category === 'edi') {
+        shopBox.classList.remove('hidden');
+      } else {
+        shopBox.classList.add('hidden');
+      }
+    }
 
     // Update timeline progress fill line width
     const fillPercent = ((stepNum - 1) / 7) * 100;

@@ -84,6 +84,7 @@ class LeadService {
         // File Uploads Handling
         $docPanPath = '';
         $docAadhaarPath = '';
+        $docShopPath = '';
         $uploadDir = __DIR__ . '/../../uploads/documents/';
         if (!file_exists($uploadDir)) {
             @mkdir($uploadDir, 0777, true);
@@ -105,6 +106,16 @@ class LeadService {
                 $fileName = 'aadhaar_' . time() . '_' . uniqid() . '.' . $ext;
                 if (move_uploaded_file($_FILES['doc_aadhaar']['tmp_name'], $uploadDir . $fileName)) {
                     $docAadhaarPath = 'uploads/documents/' . $fileName;
+                }
+            }
+        }
+
+        if (isset($_FILES['doc_shop']) && $_FILES['doc_shop']['error'] === UPLOAD_ERR_OK) {
+            $ext = strtolower(pathinfo($_FILES['doc_shop']['name'], PATHINFO_EXTENSION));
+            if (in_array($ext, ['jpg', 'jpeg', 'png', 'pdf'], true)) {
+                $fileName = 'shop_' . time() . '_' . uniqid() . '.' . $ext;
+                if (move_uploaded_file($_FILES['doc_shop']['tmp_name'], $uploadDir . $fileName)) {
+                    $docShopPath = 'uploads/documents/' . $fileName;
                 }
             }
         }
@@ -157,6 +168,7 @@ class LeadService {
             'account_number'  => $accountNumber,
             'doc_pan'         => $docPanPath,
             'doc_aadhaar'     => $docAadhaarPath,
+            'doc_shop'        => $docShopPath,
             'message'         => $message,
             'status'          => 'New',
             'assigned_to'     => '',
